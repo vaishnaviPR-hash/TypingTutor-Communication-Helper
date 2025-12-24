@@ -89,6 +89,18 @@ button:focus {
   p.description {
     font-size: 1.1rem;
   }
+  @media (orientation: landscape) {
+  p.description {
+    max-width: 300px; /* shrink max width on horizontal */
+    font-size: 1.1rem; /* slightly smaller font size */
+    padding: 0 10px;
+    word-wrap: break-word;
+  }
+
+  body {
+    padding: 20px;
+  }
+  }
   
   button {
     flex: 1 1 100%;
@@ -108,5 +120,6 @@ button:focus {
   </div>
 </body>
 </html>
+
 
 
