@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Tutor</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+    }
+
+    .app-container {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+      overflow-auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .app-title {
+      font-size: 48px;
+      color: #1565C0;
+      margin: 0 0 10px 0;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .welcome-text {
+      font-size: 24px;
+      color: #424242;
+      margin: 0;
+    }
+
+    .control-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      background: #FFFFFF;
+      border: 3px solid #1565C0;
+      border-radius: 15px;
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1565C0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .control-btn:hover {
+      background: #E3F2FD;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
+
+    .control-btn.active {
+      background: #1565C0;
+      color: #FFFFFF;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .module-card {
+      background: #FFFFFF;
+      border: 4px solid #1565C0;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .module-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      border-color: #0D47A1;
+    }
+
+    .module-card.completed {
+      border-color: #43A047;
+      background: #E8F5E9;
+    }
+
+    .module-card.completed::after {
+      content: "✓ Completed";
+      display: block;
+      margin-top: 10px;
+      font-size: 18px;
+      color: #43A047;
+      font-weight: bold;
+    }
+
+    .module-icon {
+      font-size: 64px;
+      margin-bottom: 15px;
+    }
+
+    .module-title {
+      font-size: 28px;
+      color: #1565C0;
+      margin: 0 0 10px 0;
+      font-weight: bold;
+    }
+
+    .module-description {
+      font-size: 18px;
+      color: #616161;
+      margin: 0;
+    }
+
+    .lesson-view {
+      display: none;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .lesson-view.active {
+      display: block;
+    }
+
+    .lesson-header {
+      background: #FFFFFF;
+      border: 4px solid #1565C0;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .lesson-title {
+      font-size: 36px;
+      color: #1565C0;
+      margin: 0 0 15px 0;
+    }
+
+    .instruction-area {
+      background: #FFF9C4;
+      border: 4px solid #F9A825;
+      border-radius: 15px;
+      padding: 40px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .instruction-text {
+      font-size: 48px;
+      color: #424242;
+      margin: 0;
+      font-weight: bold;
+    }
+
+    .feedback-area {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .feedback-message {
+      background: #C8E6C9;
+      border: 4px solid #43A047;
+      border-radius: 15px;
+      padding: 25px 40px;
+      font-size: 36px;
+      color: #1B5E20;
+      font-weight: bold;
+      display: none;
+      animation: bounceIn 0.5s ease;
+    }
+
+    .feedback-message.show {
+      display: block;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .keyboard-container {
+      background: #FFFFFF;
+      border: 4px solid #1565C0;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .key {
+      background: #ECEFF1;
+      border: 3px solid #90A4AE;
+      border-radius: 10px;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #37474F;
+      cursor: not-allowed;
+      transition: all 0.3s ease;
+    }
+
+    .key.active {
+      background: #FFD54F;
+      border-color: #F9A825;
+      border-width: 5px;
+      cursor: pointer;
+      animation: pulse 1.5s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(249, 168, 37, 0.5);
+    }
+
+    .key.active:hover {
+      background: #FFC107;
+      transform: scale(1.1);
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .key.spacebar {
+      width: 300px;
+    }
+
+    .lesson-controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .lesson-btn {
+      background: #FFFFFF;
+      border: 3px solid #1565C0;
+      border-radius: 15px;
+      padding: 20px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #1565C0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .lesson-btn:hover {
+      background: #E3F2FD;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
+
+    .lesson-btn.primary {
+      background: #43A047;
+      border-color: #43A047;
+      color: #FFFFFF;
+    }
+
+    .lesson-btn.primary:hover {
+      background: #388E3C;
+      border-color: #388E3C;
+    }
+
+    .skip-btn {
+      background: #FFF9C4;
+      border: 3px solid #F9A825;
+      color: #F57F17;
+      font-size: 20px;
+      padding: 15px 30px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .skip-btn:hover {
+      background: #FFF59D;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
+
+    .progress-indicator {
+      text-align: center;
+      font-size: 20px;
+      color: #616161;
+      margin-top: 20px;
+    }
+
+    .settings-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .settings-panel.show {
+      display: flex;
+    }
+
+    .settings-content {
+      background: #FFFFFF;
+      border: 4px solid #1565C0;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .settings-title {
+      font-size: 36px;
+      color: #1565C0;
+      margin: 0 0 30px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .settings-section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #E0E0E0;
+    }
+
+    .settings-section:last-of-type {
+      border-bottom: none;
+    }
+
+    .settings-subtitle {
+      font-size: 24px;
+      color: #424242;
+      margin: 0 0 15px 0;
+      font-weight: bold;
+    }
+
+    .settings-label {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 20px;
+      color: #424242;
+      margin-bottom: 15px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .settings-label:hover {
+      background: #F5F5F5;
+    }
+
+    .settings-checkbox {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    .settings-select {
+      padding: 10px 15px;
+      font-size: 18px;
+      border: 3px solid #1565C0;
+      border-radius: 10px;
+      background: #FFFFFF;
+      color: #424242;
+      cursor: pointer;
+      font-family: inherit;
+      flex: 1;
+    }
+
+    body.calm-mode .key.active {
+      animation: none;
+    }
+
+    body.calm-mode .feedback-message {
+      animation: none;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    body.calm-mode .module-card:hover {
+      transform: none;
+    }
+
+    body.calm-mode .control-btn:hover,
+    body.calm-mode .lesson-btn:hover,
+    body.calm-mode .skip-btn:hover {
+      transform: none;
+    }
+
+    body.high-contrast {
+      filter: contrast(1.5);
+    }
+
+    body.large-cursor * {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="black" stroke="white" stroke-width="2"/></svg>') 16 16, auto;
+    }
+
+    body.large-cursor .key.active {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="blue" stroke="white" stroke-width="2"/></svg>') 16 16, pointer;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-container">
+   <div class="header">
+    <h1 class="app-title" id="appTitle">Typing Tutor</h1>
+    <p class="welcome-text" id="welcomeMessage">Choose a lesson to start learning</p>
+   </div>
+   <div class="control-bar"><button class="control-btn active" id="soundToggle">🔊 Sound On</button> <button class="control-btn" id="calmModeToggle">🌙 Calm Mode</button> <button class="control-btn" id="settingsToggle">⚙️ Settings</button>
+   </div>
+   <div id="settingsPanel" class="settings-panel">
+    <div class="settings-content">
+     <h2 class="settings-title">Settings</h2>
+     <div class="settings-section">
+      <h3 class="settings-subtitle">Visual Settings</h3><label class="settings-label"> <input type="checkbox" id="reducedAnimations" class="settings-checkbox"> <span>Reduce animations</span> </label> <label class="settings-label"> <input type="checkbox" id="highContrast" class="settings-checkbox"> <span>High contrast mode</span> </label> <label class="settings-label"> <input type="checkbox" id="largeCursor" class="settings-checkbox"> <span>Large cursor</span> </label>
+     </div>
+     <div class="settings-section">
+      <h3 class="settings-subtitle">Audio Settings</h3><label class="settings-label"> <span>Speech speed:</span> <select id="speechSpeed" class="settings-select"> <option value="0.6">Very Slow</option> <option value="0.8" selected>Slow</option> <option value="1.0">Normal</option> <option value="1.2">Fast</option> </select> </label> <label class="settings-label"> <input type="checkbox" id="autoRepeat" class="settings-checkbox"> <span>Auto-repeat sounds</span> </label>
+     </div>
+     <div class="settings-section">
+      <h3 class="settings-subtitle">Learning Settings</h3><label class="settings-label"> <input type="checkbox" id="showProgress" class="settings-checkbox" checked> <span>Show progress tracker</span> </label> <label class="settings-label"> <input type="checkbox" id="celebrationEffects" class="settings-checkbox" checked> <span>Celebration effects</span> </label>
+     </div><button class="lesson-btn primary" id="closeSettings">✓ Save Settings</button>
+    </div>
+   </div>
+   <div id="moduleView" class="module-grid">
+    <div class="module-card" data-link="m1.html">
+     <div class="module-icon">
+      🔤
+     </div>
+     <h2 class="module-title">Learn Letters &amp; Keys</h2>
+     <p class="module-description">Learn what each letter looks and sounds like</p>
+    </div>
+    <div class="module-card" data-link="m2.html">
+     <div class="module-icon">
+      📝
+     </div>
+     <h2 class="module-title">Make Simple Words</h2>
+     <p class="module-description">Put letters together to form easy words</p>
+    </div>
+    <div class="module-card" data-link="m3.html">
+     <div class="module-icon">
+      💬
+     </div>
+     <h2 class="module-title">Build Sentences</h2>
+     <p class="module-description">Use space to separate words and make sentences</p>
+    </div>
+    <div class="module-card" data-link="communicationMode.html">
+     <div class="module-icon">
+      ⭐
+     </div>
+     <h2 class="module-title">Practice &amp; Get Better</h2>
+     <p class="module-description">Practice typing on your own!</p>
+    </div>
+   </div>
+   <div id="lessonView" class="lesson-view">
+    <div class="lesson-header">
+     <h2 class="lesson-title" id="lessonTitle">Lesson Title</h2>
+     <div class="progress-indicator" id="progressIndicator">
+      Step 1 of 5
+     </div>
+    </div>
+    <div class="instruction-area">
+     <p class="instruction-text" id="instructionText">Press A</p>
+    </div>
+    <div class="feedback-area">
+     <div class="feedback-message" id="feedbackMessage">
+      Great job!
+     </div>
+    </div>
+    <div class="keyboard-container" id="keyboardContainer"><!-- Keyboard will be generated here -->
+    </div>
+    <div class="lesson-controls"><button class="lesson-btn" id="repeatBtn">🔊 Repeat Sound</button> <button class="skip-btn" id="skipBtn">⏭️ Skip Lesson</button> <button class="lesson-btn" id="backBtn">⬅️ Back to Modules</button> <button class="lesson-btn primary" id="nextBtn" style="display: none;">➡️ Next Step</button>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: "#E3F2FD",
+      surface_color: "#FFFFFF",
+      text_color: "#1565C0",
+      primary_action_color: "#43A047",
+      secondary_action_color: "#1565C0",
+      font_family: "Comic Sans MS",
+      font_size: 16,
+      app_title: "Typing Tutor",
+      welcome_message: "Choose a lesson to start learning",
+      success_message: "Great job!"
+    };
+
+    let currentProgress = [];
+    let soundEnabled = true;
+    let currentModule = null;
+    let currentLessonIndex = 0;
+    let currentTarget = null;
+    let speechRate = 0.8;
+    let autoRepeat = false;
+    let autoRepeatInterval = null;
+    let showProgress = true;
+    let celebrationEffects = true;
+
+    const modules = {
+      letters: {
+        title: "Learn Letters & Keys",
+        icon: "🔤",
+        description: "Learn what each letter looks and sounds like",
+        lessons: [
+          { instruction: "Find and press A", key: "A", sound: "A says 'ay'" },
+          { instruction: "Find and press B", key: "B", sound: "B says 'bee'" },
+          { instruction: "Find and press C", key: "C", sound: "C says 'see'" },
+          { instruction: "Find and press D", key: "D", sound: "D says 'dee'" },
+          { instruction: "Find and press E", key: "E", sound: "E says 'ee'" },
+          { instruction: "Find and press F", key: "F", sound: "F says 'eff'" },
+          { instruction: "Find and press G", key: "G", sound: "G says 'jee'" },
+          { instruction: "Find and press H", key: "H", sound: "H says 'aych'" },
+          { instruction: "Find and press I", key: "I", sound: "I says 'eye'" },
+          { instruction: "Find and press J", key: "J", sound: "J says 'jay'" }
+        ]
+      },
+      words: {
+        title: "Make Simple Words",
+        icon: "📝",
+        description: "Put letters together to form easy words",
+        lessons: [
+          { instruction: "Type: CAT", keys: ["C", "A", "T"], word: "cat" },
+          { instruction: "Type: DOG", keys: ["D", "O", "G"], word: "dog" },
+          { instruction: "Type: SUN", keys: ["S", "U", "N"], word: "sun" },
+          { instruction: "Type: BED", keys: ["B", "E", "D"], word: "bed" },
+          { instruction: "Type: HAT", keys: ["H", "A", "T"], word: "hat" },
+          { instruction: "Type: PIG", keys: ["P", "I", "G"], word: "pig" },
+          { instruction: "Type: RUN", keys: ["R", "U", "N"], word: "run" },
+          { instruction: "Type: BUS", keys: ["B", "U", "S"], word: "bus" }
+        ]
+      },
+      sentences: {
+        title: "Build Sentences",
+        icon: "💬",
+        description: "Use space to separate words and make sentences",
+        lessons: [
+          { instruction: "Type: I AM", keys: ["I", " ", "A", "M"], sentence: "I am" },
+          { instruction: "Type: I GO", keys: ["I", " ", "G", "O"], sentence: "I go" },
+          { instruction: "Type: WE RUN", keys: ["W", "E", " ", "R", "U", "N"], sentence: "We run" },
+          { instruction: "Type: HE IS", keys: ["H", "E", " ", "I", "S"], sentence: "He is" },
+          { instruction: "Type: SHE CAN", keys: ["S", "H", "E", " ", "C", "A", "N"], sentence: "She can" },
+          { instruction: "Type: THE CAT", keys: ["T", "H", "E", " ", "C", "A", "T"], sentence: "The cat" },
+          { instruction: "Type: I SEE IT", keys: ["I", " ", "S", "E", "E", " ", "I", "T"], sentence: "I see it" }
+        ]
+      },
+      practice: {
+        title: "Practice & Get Better",
+        icon: "⭐",
+        description: "Practice typing on your own!",
+        lessons: [
+          { instruction: "Type: MY DOG", keys: ["M", "Y", " ", "D", "O", "G"], practice: true },
+          { instruction: "Type: THE SUN", keys: ["T", "H", "E", " ", "S", "U", "N"], practice: true },
+          { instruction: "Type: I CAN RUN", keys: ["I", " ", "C", "A", "N", " ", "R", "U", "N"], practice: true },
+          { instruction: "Type: WE GO HOME", keys: ["W", "E", " ", "G", "O", " ", "H", "O", "M", "E"], practice: true },
+          { instruction: "Type: SHE HAS A CAT", keys: ["S", "H", "E", " ", "H", "A", "S", " ", "A", " ", "C", "A", "T"], practice: true }
+        ]
+      }
+    };
+
+    const keyboard = [
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
+      ['O', 'P', 'Q', 'R', 'S', 'T'],
+      ['U', 'V', 'W', 'X', 'Y', 'Z'],
+      ['SPACE']
+    ];
+
+    function generateKeyboard() {
+      const container = document.getElementById('keyboardContainer');
+      container.innerHTML = '';
+      
+      keyboard.forEach(row => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'keyboard-row';
+        
+        row.forEach(key => {
+          const keyDiv = document.createElement('div');
+          keyDiv.className = 'key';
+          keyDiv.textContent = key === 'SPACE' ? '___' : key;
+          keyDiv.dataset.key = key === 'SPACE' ? ' ' : key;
+          
+          if (key === 'SPACE') {
+            keyDiv.classList.add('spacebar');
+          }
+          
+          keyDiv.addEventListener('click', () => handleKeyPress(keyDiv.dataset.key));
+          rowDiv.appendChild(keyDiv);
+        });
+        
+        container.appendChild(rowDiv);
+      });
+    }
+
+    function updateKeyboardHighlight() {
+      document.querySelectorAll('.key').forEach(key => {
+        key.classList.remove('active');
+      });
+      
+      if (currentTarget) {
+        const targetKey = currentTarget.toUpperCase();
+        document.querySelectorAll('.key').forEach(key => {
+          if (key.dataset.key === targetKey) {
+            key.classList.add('active');
+          }
+        });
+      }
+    }
+
+    function handleKeyPress(key) {
+      if (!currentTarget || key.toUpperCase() !== currentTarget.toUpperCase()) {
+        return;
+      }
+      
+      if (celebrationEffects) {
+        showFeedback();
+      }
+      
+      speakLetter(key);
+      
+      const lesson = modules[currentModule].lessons[currentLessonIndex];
+      if (lesson.keys) {
+        const nextIndex = lesson.keys.findIndex(k => k.toUpperCase() === key.toUpperCase()) + 1;
+        if (nextIndex < lesson.keys.length) {
+          setTimeout(() => {
+            currentTarget = lesson.keys[nextIndex];
+            updateKeyboardHighlight();
+            document.getElementById('feedbackMessage').classList.remove('show');
+            if (autoRepeat) {
+              startAutoRepeat();
+            }
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            saveProgress();
+            document.getElementById('nextBtn').style.display = 'block';
+            stopAutoRepeat();
+          }, 1500);
+        }
+      } else {
+        setTimeout(() => {
+          saveProgress();
+          document.getElementById('nextBtn').style.display = 'block';
+          stopAutoRepeat();
+        }, 1500);
+      }
+    }
+
+    async function saveProgress() {
+      const result = await window.dataSdk.create({
+        module_id: currentModule,
+        lesson_index: currentLessonIndex,
+        completed: true,
+        timestamp: new Date().toISOString()
+      });
+      
+      if (!result.isOk) {
+        console.error('Failed to save progress');
+      }
+    }
+
+    function showFeedback() {
+      const feedbackEl = document.getElementById('feedbackMessage');
+      const config = window.elementSdk.config;
+      feedbackEl.textContent = config.success_message || defaultConfig.success_message;
+      feedbackEl.classList.add('show');
+    }
+
+    function speakLetter(letter) {
+      if (!soundEnabled || !window.speechSynthesis) return;
+      
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(letter === ' ' ? 'space' : letter);
+      utterance.rate = speechRate;
+      utterance.pitch = 1.2;
+      utterance.lang = 'en-US';
+      utterance.voice = null;
+      
+      // Try to find an American English voice
+      const voices = window.speechSynthesis.getVoices();
+      const americanVoice = voices.find(voice => 
+        voice.lang.includes('en-US') || voice.lang.includes('en_US')
+      );
+      
+      if (americanVoice) {
+        utterance.voice = americanVoice;
+      }
+      
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function startAutoRepeat() {
+      stopAutoRepeat();
+      if (autoRepeat && currentTarget) {
+        autoRepeatInterval = setInterval(() => {
+          if (currentTarget && soundEnabled) {
+            speakLetter(currentTarget);
+          }
+        }, 3000);
+      }
+    }
+
+    function stopAutoRepeat() {
+      if (autoRepeatInterval) {
+        clearInterval(autoRepeatInterval);
+        autoRepeatInterval = null;
+      }
+    }
+
+    function startModule(moduleId) {
+      currentModule = moduleId;
+      currentLessonIndex = 0;
+      
+      document.getElementById('moduleView').style.display = 'none';
+      document.getElementById('lessonView').classList.add('active');
+      
+      loadLesson();
+    }
+
+    function loadLesson() {
+      const module = modules[currentModule];
+      const lesson = module.lessons[currentLessonIndex];
+      
+      document.getElementById('lessonTitle').textContent = module.title;
+      document.getElementById('instructionText').textContent = lesson.instruction;
+      
+      if (showProgress) {
+        document.getElementById('progressIndicator').textContent = 
+          `Step ${currentLessonIndex + 1} of ${module.lessons.length}`;
+        document.getElementById('progressIndicator').style.display = 'block';
+      } else {
+        document.getElementById('progressIndicator').style.display = 'none';
+      }
+      
+      document.getElementById('feedbackMessage').classList.remove('show');
+      document.getElementById('nextBtn').style.display = 'none';
+      
+      if (lesson.keys) {
+        currentTarget = lesson.keys[0];
+      } else {
+        currentTarget = lesson.key;
+      }
+      
+      generateKeyboard();
+      updateKeyboardHighlight();
+      
+      if (soundEnabled) {
+        setTimeout(() => {
+          speakLetter(currentTarget);
+          if (autoRepeat) {
+            startAutoRepeat();
+          }
+        }, 500);
+      }
+    }
+
+    function updateCompletedModules() {
+      const completedModules = new Set();
+      currentProgress.forEach(item => {
+        const module = modules[item.module_id];
+        if (module) {
+          const completedLessons = currentProgress.filter(
+            p => p.module_id === item.module_id && p.completed
+          ).length;
+          
+          if (completedLessons >= module.lessons.length) {
+            completedModules.add(item.module_id);
+          }
+        }
+      });
+      
+      document.querySelectorAll('.module-card').forEach(card => {
+        const moduleId = card.dataset.module;
+        if (completedModules.has(moduleId)) {
+          card.classList.add('completed');
+        } else {
+          card.classList.remove('completed');
+        }
+      });
+    }
+
+document.querySelectorAll('.module-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const link = card.dataset.link;
+    if (link) {
+      window.location.href = link;
+    }
+  });
+});
+
+
+    document.getElementById('soundToggle').addEventListener('click', (e) => {
+      soundEnabled = !soundEnabled;
+      e.target.textContent = soundEnabled ? '🔊 Sound On' : '🔇 Sound Off';
+      e.target.classList.toggle('active');
+      
+      if (!soundEnabled) {
+        stopAutoRepeat();
+      } else if (autoRepeat && currentTarget) {
+        startAutoRepeat();
+      }
+    });
+
+    document.getElementById('calmModeToggle').addEventListener('click', (e) => {
+      document.body.classList.toggle('calm-mode');
+      e.target.classList.toggle('active');
+    });
+
+    document.getElementById('settingsToggle').addEventListener('click', () => {
+      document.getElementById('settingsPanel').classList.add('show');
+    });
+
+    document.getElementById('closeSettings').addEventListener('click', () => {
+      document.getElementById('settingsPanel').classList.remove('show');
+    });
+
+    document.getElementById('reducedAnimations').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        document.body.classList.add('calm-mode');
+        document.getElementById('calmModeToggle').classList.add('active');
+      } else {
+        document.body.classList.remove('calm-mode');
+        document.getElementById('calmModeToggle').classList.remove('active');
+      }
+    });
+
+    document.getElementById('highContrast').addEventListener('change', (e) => {
+      document.body.classList.toggle('high-contrast', e.target.checked);
+    });
+
+    document.getElementById('largeCursor').addEventListener('change', (e) => {
+      document.body.classList.toggle('large-cursor', e.target.checked);
+    });
+
+    document.getElementById('speechSpeed').addEventListener('change', (e) => {
+      speechRate = parseFloat(e.target.value);
+    });
+
+    document.getElementById('autoRepeat').addEventListener('change', (e) => {
+      autoRepeat = e.target.checked;
+      if (autoRepeat && currentTarget && soundEnabled) {
+        startAutoRepeat();
+      } else {
+        stopAutoRepeat();
+      }
+    });
+
+    document.getElementById('showProgress').addEventListener('change', (e) => {
+      showProgress = e.target.checked;
+      if (currentModule) {
+        document.getElementById('progressIndicator').style.display = showProgress ? 'block' : 'none';
+      }
+    });
+
+    document.getElementById('celebrationEffects').addEventListener('change', (e) => {
+      celebrationEffects = e.target.checked;
+    });
+
+    document.getElementById('repeatBtn').addEventListener('click', () => {
+      if (currentTarget && soundEnabled) {
+        speakLetter(currentTarget);
+      }
+    });
+
+    document.getElementById('skipBtn').addEventListener('click', () => {
+      const module = modules[currentModule];
+      if (currentLessonIndex < module.lessons.length - 1) {
+        currentLessonIndex++;
+        loadLesson();
+      } else {
+        document.getElementById('backBtn').click();
+      }
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      stopAutoRepeat();
+      currentModule = null;
+      currentTarget = null;
+      document.getElementById('lessonView').classList.remove('active');
+      document.getElementById('moduleView').style.display = 'grid';
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      const module = modules[currentModule];
+      if (currentLessonIndex < module.lessons.length - 1) {
+        currentLessonIndex++;
+        loadLesson();
+      } else {
+        document.getElementById('backBtn').click();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (currentTarget) {
+        e.preventDefault();
+        handleKeyPress(e.key);
+      }
+    });
+
+    const dataHandler = {
+      onDataChanged(data) {
+        currentProgress = data;
+        updateCompletedModules();
+      }
+    };
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Arial, sans-serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      document.querySelector('.app-container').style.background = 
+        `linear-gradient(135deg, ${config.background_color || defaultConfig.background_color} 0%, ${config.secondary_action_color || defaultConfig.secondary_action_color}33 100%)`;
+      
+      document.getElementById('appTitle').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('appTitle').style.color = config.text_color || defaultConfig.text_color;
+      document.getElementById('appTitle').style.fontSize = `${baseSize * 3}px`;
+      
+      document.getElementById('welcomeMessage').textContent = config.welcome_message || defaultConfig.welcome_message;
+      document.getElementById('welcomeMessage').style.fontSize = `${baseSize * 1.5}px`;
+      
+      document.querySelectorAll('.module-card').forEach(card => {
+        card.style.background = config.surface_color || defaultConfig.surface_color;
+        card.style.borderColor = config.text_color || defaultConfig.text_color;
+      });
+      
+      document.querySelectorAll('.module-title').forEach(title => {
+        title.style.color = config.text_color || defaultConfig.text_color;
+        title.style.fontSize = `${baseSize * 1.75}px`;
+      });
+      
+      document.querySelectorAll('.control-btn').forEach(btn => {
+        btn.style.borderColor = config.text_color || defaultConfig.text_color;
+        btn.style.color = config.text_color || defaultConfig.text_color;
+        btn.style.fontSize = `${baseSize * 1.25}px`;
+      });
+      
+      document.querySelectorAll('.lesson-btn.primary').forEach(btn => {
+        btn.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+        btn.style.borderColor = config.primary_action_color || defaultConfig.primary_action_color;
+        btn.style.fontSize = `${baseSize * 1.5}px`;
+      });
+      
+      document.querySelectorAll('.lesson-btn:not(.primary)').forEach(btn => {
+        btn.style.borderColor = config.text_color || defaultConfig.text_color;
+        btn.style.color = config.text_color || defaultConfig.text_color;
+        btn.style.fontSize = `${baseSize * 1.5}px`;
+      });
+      
+      const instructionText = document.getElementById('instructionText');
+      if (instructionText) {
+        instructionText.style.fontSize = `${baseSize * 3}px`;
+      }
+      
+      const lessonTitle = document.getElementById('lessonTitle');
+      if (lessonTitle) {
+        lessonTitle.style.color = config.text_color || defaultConfig.text_color;
+        lessonTitle.style.fontSize = `${baseSize * 2.25}px`;
+      }
+      
+      const settingsTitle = document.querySelector('.settings-title');
+      if (settingsTitle) {
+        settingsTitle.style.fontSize = `${baseSize * 2.25}px`;
+        settingsTitle.style.color = config.text_color || defaultConfig.text_color;
+      }
+    }
+
+    async function init() {
+      // Load voices for speech synthesis
+      if (window.speechSynthesis) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+        };
+      }
+      
+      const dataResult = await window.dataSdk.init(dataHandler);
+      if (!dataResult.isOk) {
+        console.error('Failed to initialize data SDK');
+      }
+      
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["app_title", config.app_title || defaultConfig.app_title],
+          ["welcome_message", config.welcome_message || defaultConfig.welcome_message],
+          ["success_message", config.success_message || defaultConfig.success_message]
+        ])
+      });
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2fb0265267c195',t:'MTc2NjU3NTAwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

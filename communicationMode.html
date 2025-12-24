@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Communication Mode</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+body {
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+}
+
+.main-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.mode-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.text-display-section {
+  flex: 0 0 20%;
+  display: flex;
+  flex-direction: row;
+  padding: 30px;
+  border-bottom: 4px solid;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.typed-content {
+  flex: 1;
+  font-size: 56px;
+  font-weight: bold;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 16px;
+  border: 3px solid;
+}
+
+.control-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+}
+
+.control-btn {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+  border: 3px solid;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.control-btn:hover {
+  transform: scale(1.05);
+}
+
+.control-btn:active {
+  transform: scale(0.98);
+}
+
+.control-btn:focus {
+  outline: 5px solid #4a90e2;
+  outline-offset: 3px;
+}
+
+.keyboard-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.keyboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.key-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex: 1;
+}
+
+.key-btn {
+  flex: 1;
+  min-width: 80px;
+  max-width: 140px;
+  height: 100%;
+  font-size: 52px;
+  font-weight: bold;
+  border: 3px solid;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+  user-select: none;
+}
+
+.key-btn:hover {
+  transform: scale(1.06);
+}
+
+.key-btn:active {
+  transform: scale(0.96);
+}
+
+.key-btn:focus {
+  outline: 5px solid #4a90e2;
+  outline-offset: 3px;
+}
+
+.key-btn.space-key {
+  flex: 3;
+  max-width: 500px;
+}
+
+.key-btn.backspace-key {
+  flex: 2;
+  max-width: 280px;
+  font-size: 40px;
+}
+
+.key-btn.pressed-animation {
+  transform: scale(0.94);
+}
+
+@media (max-width: 1200px) {
+  .key-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
+  }
+  
+  .key-btn.space-key {
+    width: 250px;
+  }
+  
+  .key-btn.backspace-key {
+    width: 130px;
+  }
+}
+
+@media (max-width: 768px) {
+  .typed-content {
+    font-size: 40px;
+  }
+  
+  .control-btn {
+    font-size: 22px;
+    padding: 16px 35px;
+    min-width: 140px;
+  }
+  
+  .key-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  
+  .key-btn.space-key {
+    width: 200px;
+  }
+  
+  .key-btn.backspace-key {
+    width: 110px;
+    font-size: 20px;
+  }
+}
+
+/* === NEW: Landscape orientation fixes for keyboard spacing === */
+
+@media (orientation: landscape) {
+  .text-display-section {
+    flex: 0 0 15%; /* less height for text display */
+    padding: 20px 30px; /* reduce padding top/bottom */
+  }
+
+  .keyboard-section {
+    flex: 1 1 85%; /* more height for keyboard */
+    padding: 30px 20px 20px 20px; /* more padding top */
+  }
+
+  .keyboard-grid {
+    height: 100%;
+    gap: 8px;
+    justify-content: space-between; /* spread rows vertically */
+  }
+
+  .key-row {
+    flex: 1;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .key-btn {
+    min-width: 90px; /* slightly wider */
+    max-width: 160px;
+    font-size: 48px; /* slightly smaller */
+    height: 100%;
+  }
+  
+  .key-btn.space-key {
+    flex: 3;
+    max-width: 600px;
+  }
+
+  .key-btn.backspace-key {
+    flex: 2;
+    max-width: 320px;
+    font-size: 38px;
+  }
+}
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <main class="main-container" id="mainContainer">
+   <div class="mode-content active" id="communicationMode">
+    <section class="text-display-section" id="displaySection" aria-label="Text Display">
+     <div class="typed-content" id="typedContent" role="textbox" aria-live="polite" aria-label="Your typed text"></div>
+     <nav class="control-bar" aria-label="Controls"><button class="control-btn" id="speakBtn" aria-label="Speak text aloud">🔊</button> <button class="control-btn" id="soundBtn" aria-label="Toggle sound">🔔</button> <button class="control-btn" id="clearBtn" aria-label="Clear all text">🗑️</button>
+     </nav>
+    </section>
+    <section class="keyboard-section" id="keyboardSection" aria-label="Keyboard">
+     <div class="keyboard-grid">
+      <div class="key-row" id="row1" role="group" aria-label="Row 1"></div>
+      <div class="key-row" id="row2" role="group" aria-label="Row 2"></div>
+      <div class="key-row" id="row3" role="group" aria-label="Row 3"></div>
+      <div class="key-row" id="row4" role="group" aria-label="Row 4"></div>
+      <div class="key-row" id="row5" role="group" aria-label="Row 5"></div>
+     </div>
+    </section>
+   </div>
+  </main>
+  <script>
+    const defaultConfig = {
+      background_color: '#e3f2fd',
+      surface_color: '#ffffff',
+      text_color: '#1a237e',
+      primary_action_color: '#64b5f6',
+      secondary_action_color: '#90caf9',
+      font_family: 'Arial',
+      font_size: 16,
+      clear_button_text: 'Clear',
+      sound_toggle_on: 'Sound: ON',
+      sound_toggle_off: 'Sound: OFF',
+      speak_button_text: 'Speak'
+    };
+
+    let soundEnabled = true;
+    let currentText = '';
+
+    const keyboardLayout = [
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
+      ['O', 'P', 'Q', 'R', 'S', 'T'],
+      ['U', 'V', 'W', 'X', 'Y', 'Z'],
+      ['SPACE', 'BACKSPACE']
+    ];
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const speechSynth = window.speechSynthesis;
+
+    const letterPhonetics = {
+      'A': 'ay', 'B': 'bee', 'C': 'see', 'D': 'dee', 'E': 'ee',
+      'F': 'eff', 'G': 'jee', 'H': 'aitch', 'I': 'eye', 'J': 'jay',
+      'K': 'kay', 'L': 'ell', 'M': 'em', 'N': 'en', 'O': 'oh',
+      'P': 'pee', 'Q': 'cue', 'R': 'are', 'S': 'ess', 'T': 'tee',
+      'U': 'you', 'V': 'vee', 'W': 'double you', 'X': 'ex', 'Y': 'why',
+      'Z': 'zee'
+    };
+
+    function playTone(letter) {
+      if (!soundEnabled) return;
+      
+      const frequencies = {
+        'A': 261.63, 'B': 277.18, 'C': 293.66, 'D': 311.13, 'E': 329.63,
+        'F': 349.23, 'G': 369.99, 'H': 392.00, 'I': 415.30, 'J': 440.00,
+        'K': 466.16, 'L': 493.88, 'M': 523.25, 'N': 554.37, 'O': 587.33,
+        'P': 622.25, 'Q': 659.25, 'R': 698.46, 'S': 739.99, 'T': 783.99,
+        'U': 830.61, 'V': 880.00, 'W': 932.33, 'X': 987.77, 'Y': 1046.50,
+        'Z': 1108.73, 'SPACE': 180
+      };
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.frequency.value = frequencies[letter] || 440;
+      osc.type = 'sine';
+
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    function speakLetter(letter) {
+      if (!soundEnabled || !letterPhonetics[letter]) return;
+      
+      speechSynth.cancel();
+      const utterance = new SpeechSynthesisUtterance(letterPhonetics[letter]);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      utterance.lang = 'en-US';
+      setTimeout(() => speechSynth.speak(utterance), 80);
+    }
+
+    function speakFullText(text) {
+      if (!text.trim()) return;
+      
+      speechSynth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      utterance.lang = 'en-US';
+      speechSynth.speak(utterance);
+    }
+
+    function buildKeyboard() {
+      keyboardLayout.forEach((row, index) => {
+        const rowElement = document.getElementById(`row${index + 1}`);
+        row.forEach(key => {
+          const btn = document.createElement('button');
+          btn.className = 'key-btn';
+          btn.textContent = key === 'SPACE' ? 'SPACE' : key === 'BACKSPACE' ? '⌫' : key;
+          btn.setAttribute('data-key', key);
+          btn.setAttribute('aria-label', key === 'BACKSPACE' ? 'Backspace' : key === 'SPACE' ? 'Space' : `Letter ${key}`);
+          
+          if (key === 'SPACE') {
+            btn.classList.add('space-key');
+          } else if (key === 'BACKSPACE') {
+            btn.classList.add('backspace-key');
+          }
+
+          btn.addEventListener('click', () => pressKey(key, btn));
+          rowElement.appendChild(btn);
+        });
+      });
+    }
+
+    function pressKey(key, btnElement) {
+      btnElement.classList.add('pressed-animation');
+      setTimeout(() => btnElement.classList.remove('pressed-animation'), 150);
+
+      if (key === 'BACKSPACE') {
+        currentText = currentText.slice(0, -1);
+        updateDisplay();
+        return;
+      }
+
+      const char = key === 'SPACE' ? ' ' : key;
+      currentText += char;
+      updateDisplay();
+      
+      playTone(key);
+      speakLetter(key);
+    }
+
+    function updateDisplay() {
+      document.getElementById('typedContent').textContent = currentText;
+    }
+
+    function clearAllText() {
+      currentText = '';
+      updateDisplay();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      updateSoundButton();
+    }
+
+    function updateSoundButton() {
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const btn = document.getElementById('soundBtn');
+      btn.textContent = soundEnabled ? '🔔' : '🔕';
+    }
+
+    document.getElementById('speakBtn').addEventListener('click', () => {
+      speakFullText(currentText);
+    });
+
+    document.getElementById('soundBtn').addEventListener('click', toggleSound);
+    document.getElementById('clearBtn').addEventListener('click', clearAllText);
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toUpperCase();
+      if (key === 'BACKSPACE') {
+        e.preventDefault();
+        const btn = document.querySelector('[data-key="BACKSPACE"]');
+        if (btn) pressKey('BACKSPACE', btn);
+      } else if (key === ' ') {
+        e.preventDefault();
+        const btn = document.querySelector('[data-key="SPACE"]');
+        if (btn) pressKey('SPACE', btn);
+      } else if (/^[A-Z]$/.test(key)) {
+        const btn = document.querySelector(`[data-key="${key}"]`);
+        if (btn) pressKey(key, btn);
+      }
+    });
+
+    async function onConfigChange(config) {
+      const baseFont = config.font_family || defaultConfig.font_family;
+      const fontStack = `${baseFont}, Arial, sans-serif`;
+      const baseSize = config.font_size || defaultConfig.font_size;
+
+      document.body.style.fontFamily = fontStack;
+      
+      const mainContainer = document.getElementById('mainContainer');
+      mainContainer.style.background = config.background_color || defaultConfig.background_color;
+
+      const displaySection = document.getElementById('displaySection');
+      displaySection.style.background = config.surface_color || defaultConfig.surface_color;
+      displaySection.style.borderColor = config.text_color || defaultConfig.text_color;
+
+      const typedContent = document.getElementById('typedContent');
+      typedContent.style.color = config.text_color || defaultConfig.text_color;
+      typedContent.style.background = config.background_color || defaultConfig.background_color;
+      typedContent.style.borderColor = config.text_color || defaultConfig.text_color;
+      typedContent.style.fontSize = `${baseSize * 3.5}px`;
+
+      const speakBtn = document.getElementById('speakBtn');
+      speakBtn.textContent = '🔊';
+      speakBtn.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+      speakBtn.style.color = config.text_color || defaultConfig.text_color;
+      speakBtn.style.borderColor = config.text_color || defaultConfig.text_color;
+      speakBtn.style.fontSize = `${baseSize * 2}px`;
+
+      const clearBtn = document.getElementById('clearBtn');
+      clearBtn.textContent = '🗑️';
+      clearBtn.style.background = config.secondary_action_color || defaultConfig.secondary_action_color;
+      clearBtn.style.color = config.text_color || defaultConfig.text_color;
+      clearBtn.style.borderColor = config.text_color || defaultConfig.text_color;
+      clearBtn.style.fontSize = `${baseSize * 2}px`;
+
+      const soundBtn = document.getElementById('soundBtn');
+      soundBtn.textContent = soundEnabled ? '🔔' : '🔕';
+      soundBtn.style.background = config.secondary_action_color || defaultConfig.secondary_action_color;
+      soundBtn.style.color = config.text_color || defaultConfig.text_color;
+      soundBtn.style.borderColor = config.text_color || defaultConfig.text_color;
+      soundBtn.style.fontSize = `${baseSize * 2}px`;
+
+      const keyboardSection = document.getElementById('keyboardSection');
+      keyboardSection.style.background = config.surface_color || defaultConfig.surface_color;
+
+      document.querySelectorAll('.key-btn').forEach(key => {
+        key.style.background = config.background_color || defaultConfig.background_color;
+        key.style.color = config.text_color || defaultConfig.text_color;
+        key.style.borderColor = config.text_color || defaultConfig.text_color;
+        key.style.fontSize = `${baseSize * 3.25}px`;
+      });
+
+      document.querySelectorAll('.key-btn.backspace-key').forEach(key => {
+        key.style.fontSize = `${baseSize * 2.5}px`;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['clear_button_text', config.clear_button_text || defaultConfig.clear_button_text],
+          ['sound_toggle_on', config.sound_toggle_on || defaultConfig.sound_toggle_on],
+          ['sound_toggle_off', config.sound_toggle_off || defaultConfig.sound_toggle_off],
+          ['speak_button_text', config.speak_button_text || defaultConfig.speak_button_text]
+        ])
+      });
+    }
+
+    buildKeyboard();
+    onConfigChange(defaultConfig);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2fb5a9610c7f8b',t:'MTc2NjU3NTIyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

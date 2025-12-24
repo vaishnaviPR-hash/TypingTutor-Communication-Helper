@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Module 2 – Learn Words</title>
+
+  <!-- Import Poppins font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background: #e3f2fd;
+      overflow: hidden;
+    }
+
+    /* ===== TOP LESSON BAR ===== */
+    .lesson-header {
+      height: 18%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 30px;
+      background: #90caf9; /* Light blue background */
+      border-bottom: 4px solid #1a237e;
+      user-select: none;
+    }
+
+    .lesson-text {
+      font-size: 32px;
+      font-weight: 600;
+      color: #0d1b47; /* Darker navy */
+      margin-bottom: 10px;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    .typed-word {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a237e;
+      letter-spacing: 0.1em;
+      user-select: none;
+      min-height: 60px;
+    }
+
+.lesson-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 0px;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 500px; /* optional */
+
+  /* Add this to push buttons fully right */
+  margin-left: auto;
+  padding-right: 30px; /* tweak this value as you want */
+}
+
+
+
+    .lesson-btn {
+      padding: 12px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 3px solid #1a237e;
+      background: #bbdefb; /* Soft blue background */
+      color: #1a237e;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+    .lesson-btn:hover {
+      background-color: #90caf9;
+    }
+
+    /* ===== KEYBOARD SECTION ===== */
+    .keyboard-section {
+      height: 82%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .keyboard-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 100%;
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .key-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .key-btn {
+      flex: 1;
+      min-width: 80px;
+      max-width: 140px;
+      height: 100%;
+      font-size: 52px;
+      font-weight: bold;
+      border: 3px solid #1a237e;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+      user-select: none;
+      background: #bbdefb; /* Soft blue background */
+      color: #1a237e;
+    }
+
+    .key-btn.space-key {
+      flex: 3;
+      max-width: 500px;
+    }
+
+    .key-btn.backspace-key {
+      flex: 2;
+      max-width: 280px;
+      font-size: 40px;
+    }
+
+    .key-btn:hover {
+      background-color: #90caf9; /* Slightly darker on hover */
+      transform: scale(1.06);
+    }
+
+    .key-btn:active {
+      transform: scale(0.96);
+    }
+
+    .key-btn:focus {
+      outline: 5px solid #4a90e2;
+      outline-offset: 3px;
+    }
+
+    /* Highlight for the current letter */
+    .key-btn.highlight {
+      background-color: #ffeb3b;
+      transform: scale(1.08);
+      border-color: #fbc02d;
+    }
+
+    /* Press animation */
+    .key-btn.pressed-animation {
+      transform: scale(0.94);
+      background-color: #ffe066 !important;
+      border-color: #f9a825 !important;
+    }
+
+    /* Control bar with speak, sound toggle, clear */
+    .control-bar {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+    .control-btn {
+      width: 70px;
+      height: 70px;
+      font-size: 32px;
+      border: 3px solid #1a237e;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      user-select: none;
+      background: #bbdefb; /* Soft blue background */
+      color: #1a237e;
+      transition: transform 0.2s ease;
+    }
+    .control-btn:hover {
+      transform: scale(1.05);
+      background: #90caf9;
+    }
+    .control-btn:active {
+      transform: scale(0.98);
+    }
+    .control-btn:focus {
+      outline: 5px solid #4a90e2;
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="lesson-header" role="banner">
+    <div class="lesson-text" id="instruction" aria-live="polite" aria-atomic="true" aria-relevant="text">
+      Type the word:
+    </div>
+    <div class="typed-word" id="typedWord" aria-live="polite" aria-atomic="true" aria-relevant="text"></div>
+
+    <div class="lesson-buttons" >
+      <button class="lesson-btn" onclick="location.href='learningMode.html'" aria-label="Back to menu" >⬅ Menu</button>
+      <button class="lesson-btn" id="skipBtn" aria-label="Skip module">Skip</button>
+    </div>
+  </header>
+
+  <!-- ===== KEYBOARD ===== -->
+  <section class="keyboard-section" aria-label="Keyboard">
+    <div class="keyboard-grid" id="keyboardGrid">
+      <div class="key-row" id="row1" role="group" aria-label="Keyboard row 1"></div>
+      <div class="key-row" id="row2" role="group" aria-label="Keyboard row 2"></div>
+      <div class="key-row" id="row3" role="group" aria-label="Keyboard row 3"></div>
+      <div class="key-row" id="row4" role="group" aria-label="Keyboard row 4"></div>
+      <div class="key-row" id="row5" role="group" aria-label="Keyboard row 5"></div>
+    </div>
+
+    <!-- Controls like speak/read aloud, sound toggle, clear text -->
+    <nav class="control-bar" aria-label="Controls">
+      <button class="control-btn" id="speakBtn" aria-label="Speak current instruction">🔊</button>
+      <button class="control-btn" id="soundBtn" aria-label="Toggle sound">🔔</button>
+      <button class="control-btn" id="clearBtn" aria-label="Clear typed text">🗑️</button>
+    </nav>
+  </section>
+
+  <script>
+    // Keyboard layout
+    const keyboardLayout = [
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
+      ['O', 'P', 'Q', 'R', 'S', 'T'],
+      ['U', 'V', 'W', 'X', 'Y', 'Z'],
+      ['SPACE', 'BACKSPACE']
+    ];
+
+    // Larger word list for Module 2
+    const words = [
+      'CAT', 'DOG', 'SUN', 'FUN', 'MAP', 'HAT', 'RUN', 'JUMP', 'BOOK', 'TREE',
+      'BALL', 'FISH', 'CUP', 'MOON', 'STAR', 'SHIP', 'BIRD', 'RAIN', 'SNOW',
+      'LOVE', 'HOME', 'FROG', 'WIND', 'ROCK', 'ROAD', 'COW', 'PIG', 'HEN', 'ANT'
+    ];
+
+    let currentWord = '';
+    let currentLetterIndex = 0;
+    let typedLetters = '';
+    let soundEnabled = true;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const speechSynth = window.speechSynthesis;
+
+    // Frequencies for each letter for tone
+    const frequencies = {
+      'A': 261.63, 'B': 277.18, 'C': 293.66, 'D': 311.13, 'E': 329.63,
+      'F': 349.23, 'G': 369.99, 'H': 392.00, 'I': 415.30, 'J': 440.00,
+      'K': 466.16, 'L': 493.88, 'M': 523.25, 'N': 554.37, 'O': 587.33,
+      'P': 622.25, 'Q': 659.25, 'R': 698.46, 'S': 739.99, 'T': 783.99,
+      'U': 830.61, 'V': 880.00, 'W': 932.33, 'X': 987.77, 'Y': 1046.50,
+      'Z': 1108.73, 'SPACE': 180
+    };
+
+    function playTone(letter) {
+      if (!soundEnabled) return;
+
+      const freq = frequencies[letter] || 440;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    function speak(text) {
+      if (!text) return;
+      speechSynth.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.9;
+      speechSynth.speak(utter);
+    }
+
+    function buildKeyboard() {
+      keyboardLayout.forEach((row, i) => {
+        const rowEl = document.getElementById(`row${i + 1}`);
+        rowEl.innerHTML = '';
+        row.forEach(key => {
+          const btn = document.createElement('button');
+          btn.className = 'key-btn';
+          btn.textContent = key === 'BACKSPACE' ? '⌫' : key;
+          btn.dataset.key = key;
+          if (key === 'SPACE') btn.classList.add('space-key');
+          if (key === 'BACKSPACE') btn.classList.add('backspace-key');
+          btn.addEventListener('click', () => handlePress(key, btn));
+          rowEl.appendChild(btn);
+        });
+      });
+    }
+
+    function highlightCurrentKey() {
+      document.querySelectorAll('.key-btn').forEach(btn => btn.classList.remove('highlight'));
+      if (currentLetterIndex < currentWord.length) {
+        const letter = currentWord[currentLetterIndex];
+        const btn = document.querySelector(`[data-key="${letter}"]`);
+        if (btn) btn.classList.add('highlight');
+      }
+    }
+
+    function updateInstruction() {
+      document.getElementById('instruction').textContent = 'Type the word:';
+      document.getElementById('typedWord').textContent = typedLetters.padEnd(currentWord.length, '_');
+    }
+
+    function nextWord() {
+      // Pick a random word different from current
+      let newWord;
+      do {
+        newWord = words[Math.floor(Math.random() * words.length)];
+      } while (newWord === currentWord);
+      currentWord = newWord;
+      currentLetterIndex = 0;
+      typedLetters = '';
+      updateInstruction();
+      highlightCurrentKey();
+      speak(`Type the word ${currentWord}`);
+    }
+
+    function handlePress(key, btnElement) {
+      if (currentLetterIndex >= currentWord.length) return; // Already finished
+
+      if (key === currentWord[currentLetterIndex]) {
+        // Correct letter pressed
+        btnElement.classList.add('pressed-animation');
+        playTone(key);
+        speak(key);
+
+        typedLetters += key;
+        updateInstruction();
+
+        setTimeout(() => {
+          btnElement.classList.remove('pressed-animation');
+          currentLetterIndex++;
+
+          if (currentLetterIndex < currentWord.length) {
+            highlightCurrentKey();
+          } else {
+            // Word complete
+            speak(`Good job! You typed the word ${currentWord}`);
+            setTimeout(nextWord, 1200);
+          }
+        }, 350);
+      }
+    }
+
+    function skipModule() {
+      speak("Module skipped");
+      location.href = 'learningMode.html';
+    }
+
+    function clearTyped() {
+      typedLetters = '';
+      currentLetterIndex = 0;
+      updateInstruction();
+      highlightCurrentKey();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      updateSoundButton();
+    }
+
+    function updateSoundButton() {
+      const btn = document.getElementById('soundBtn');
+      btn.textContent = soundEnabled ? '🔔' : '🔕';
+    }
+
+    function speakInstruction() {
+      const text = document.getElementById('instruction').textContent + ' ' + document.getElementById('typedWord').textContent.replace(/_/g, '');
+      speak(text);
+    }
+
+    // Event listeners for control buttons
+    document.getElementById('skipBtn').addEventListener('click', skipModule);
+    document.getElementById('soundBtn').addEventListener('click', toggleSound);
+    document.getElementById('speakBtn').addEventListener('click', speakInstruction);
+    document.getElementById('clearBtn').addEventListener('click', clearTyped);
+
+    // Keyboard support from physical keyboard
+    document.addEventListener('keydown', (e) => {
+      let key = e.key.toUpperCase();
+      if (key === ' ') key = 'SPACE';
+      else if (key === 'BACKSPACE') key = 'BACKSPACE';
+
+      const btn = document.querySelector(`[data-key="${key}"]`);
+      if (btn) {
+        e.preventDefault();
+        handlePress(key, btn);
+      }
+    });
+
+    // Init
+    buildKeyboard();
+    nextWord();
+    updateSoundButton();
+  </script>
+</body>
+</html>
