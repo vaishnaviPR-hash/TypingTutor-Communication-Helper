@@ -174,8 +174,193 @@
 </section>
 
 <script>
-  /* JS UNCHANGED – your existing logic stays exactly the same */
+    // Keyboard layout
+    const keyboardLayout = [
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
+      ['O', 'P', 'Q', 'R', 'S', 'T'],
+      ['U', 'V', 'W', 'X', 'Y', 'Z'],
+      ['SPACE', 'BACKSPACE']
+    ];
+
+    // Larger word list for Module 2
+    const words = [
+      'CAT', 'DOG', 'SUN', 'FUN', 'MAP', 'HAT', 'RUN', 'JUMP', 'BOOK', 'TREE',
+      'BALL', 'FISH', 'CUP', 'MOON', 'STAR', 'SHIP', 'BIRD', 'RAIN', 'SNOW',
+      'LOVE', 'HOME', 'FROG', 'WIND', 'ROCK', 'ROAD', 'COW', 'PIG', 'HEN', 'ANT'
+    ];
+
+    let currentWord = '';
+    let currentLetterIndex = 0;
+    let typedLetters = '';
+    let soundEnabled = true;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const speechSynth = window.speechSynthesis;
+
+    // Frequencies for each letter for tone
+    const frequencies = {
+      'A': 261.63, 'B': 277.18, 'C': 293.66, 'D': 311.13, 'E': 329.63,
+      'F': 349.23, 'G': 369.99, 'H': 392.00, 'I': 415.30, 'J': 440.00,
+      'K': 466.16, 'L': 493.88, 'M': 523.25, 'N': 554.37, 'O': 587.33,
+      'P': 622.25, 'Q': 659.25, 'R': 698.46, 'S': 739.99, 'T': 783.99,
+      'U': 830.61, 'V': 880.00, 'W': 932.33, 'X': 987.77, 'Y': 1046.50,
+      'Z': 1108.73, 'SPACE': 180
+    };
+
+    function playTone(letter) {
+      if (!soundEnabled) return;
+
+      const freq = frequencies[letter] || 440;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    function speak(text) {
+      if (!text) return;
+      speechSynth.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.9;
+      speechSynth.speak(utter);
+    }
+
+    function buildKeyboard() {
+      keyboardLayout.forEach((row, i) => {
+        const rowEl = document.getElementById(`row${i + 1}`);
+        rowEl.innerHTML = '';
+        row.forEach(key => {
+          const btn = document.createElement('button');
+          btn.className = 'key-btn';
+          btn.textContent = key === 'BACKSPACE' ? '⌫' : key;
+          btn.dataset.key = key;
+          if (key === 'SPACE') btn.classList.add('space-key');
+          if (key === 'BACKSPACE') btn.classList.add('backspace-key');
+          btn.addEventListener('click', () => handlePress(key, btn));
+          rowEl.appendChild(btn);
+        });
+      });
+    }
+
+    function highlightCurrentKey() {
+      document.querySelectorAll('.key-btn').forEach(btn => btn.classList.remove('highlight'));
+      if (currentLetterIndex < currentWord.length) {
+        const letter = currentWord[currentLetterIndex];
+        const btn = document.querySelector(`[data-key="${letter}"]`);
+        if (btn) btn.classList.add('highlight');
+      }
+    }
+
+    function updateInstruction() {
+      document.getElementById('instruction').textContent = 'Type the word:';
+      document.getElementById('typedWord').textContent = typedLetters.padEnd(currentWord.length, '_');
+    }
+
+    function nextWord() {
+      // Pick a random word different from current
+      let newWord;
+      do {
+        newWord = words[Math.floor(Math.random() * words.length)];
+      } while (newWord === currentWord);
+      currentWord = newWord;
+      currentLetterIndex = 0;
+      typedLetters = '';
+      updateInstruction();
+      highlightCurrentKey();
+      speak(`Type the word ${currentWord}`);
+    }
+
+    function handlePress(key, btnElement) {
+      if (currentLetterIndex >= currentWord.length) return; // Already finished
+
+      if (key === currentWord[currentLetterIndex]) {
+        // Correct letter pressed
+        btnElement.classList.add('pressed-animation');
+        playTone(key);
+        speak(key);
+
+        typedLetters += key;
+        updateInstruction();
+
+        setTimeout(() => {
+          btnElement.classList.remove('pressed-animation');
+          currentLetterIndex++;
+
+          if (currentLetterIndex < currentWord.length) {
+            highlightCurrentKey();
+          } else {
+            // Word complete
+            speak(`Good job! You typed the word ${currentWord}`);
+            setTimeout(nextWord, 1200);
+          }
+        }, 350);
+      }
+    }
+
+    function skipModule() {
+      speak("Module skipped");
+      location.href = 'learningMode.html';
+    }
+
+    function clearTyped() {
+      typedLetters = '';
+      currentLetterIndex = 0;
+      updateInstruction();
+      highlightCurrentKey();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      updateSoundButton();
+    }
+
+    function updateSoundButton() {
+      const btn = document.getElementById('soundBtn');
+      btn.textContent = soundEnabled ? '🔔' : '🔕';
+    }
+
+    function speakInstruction() {
+      const text = document.getElementById('instruction').textContent + ' ' + document.getElementById('typedWord').textContent.replace(/_/g, '');
+      speak(text);
+    }
+
+    // Event listeners for control buttons
+    document.getElementById('skipBtn').addEventListener('click', skipModule);
+    document.getElementById('soundBtn').addEventListener('click', toggleSound);
+    document.getElementById('speakBtn').addEventListener('click', speakInstruction);
+    document.getElementById('clearBtn').addEventListener('click', clearTyped);
+
+    // Keyboard support from physical keyboard
+    document.addEventListener('keydown', (e) => {
+      let key = e.key.toUpperCase();
+      if (key === ' ') key = 'SPACE';
+      else if (key === 'BACKSPACE') key = 'BACKSPACE';
+
+      const btn = document.querySelector(`[data-key="${key}"]`);
+      if (btn) {
+        e.preventDefault();
+        handlePress(key, btn);
+      }
+    });
+
+    // Init
+    buildKeyboard();
+    nextWord();
+    updateSoundButton();
 </script>
 
 </body>
 </html>
+
