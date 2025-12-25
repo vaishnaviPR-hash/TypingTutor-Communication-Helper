@@ -134,12 +134,15 @@ body, html {
 
 .key-row {
   display: flex;
-  gap: 16px;
+  gap: 12px;          /* Slightly smaller gap */
   justify-content: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;    /* Allow wrapping to avoid overflow */
   flex-grow: 1;
   min-height: 40px;
+  max-width: 100%;    /* Ensure max width stays within container */
+  box-sizing: border-box;
 }
+
 
 .key-btn {
   flex-grow: 1;
@@ -607,3 +610,4 @@ const keyboardLayout = [
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2fb5a9610c7f8b',t:'MTc2NjU3NTIyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 </html>
+
