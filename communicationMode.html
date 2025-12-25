@@ -124,7 +124,7 @@ body, html {
 .keyboard-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
   width: 100%;
   max-width: 100%;
   height: 100%;
@@ -134,7 +134,7 @@ body, html {
 
 .key-row {
   display: flex;
-  gap: 8px;
+  gap: 16px;
   justify-content: center;
   flex-wrap: nowrap;
   flex-grow: 1;
@@ -162,6 +162,7 @@ body, html {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 6px;
 }
 
 .key-btn:hover {
@@ -306,7 +307,7 @@ body, html {
    <div class="mode-content active" id="communicationMode">
     <section class="text-display-section" id="displaySection" aria-label="Text Display">
      <div class="typed-content" id="typedContent" role="textbox" aria-live="polite" aria-label="Your typed text"></div>
-     <nav class="control-bar" aria-label="Controls"><button class="control-btn" id="speakBtn" aria-label="Speak text aloud">🔊</button> <button class="control-btn" id="soundBtn" aria-label="Toggle sound">🔔</button> <button class="control-btn" id="clearBtn" aria-label="Clear all text">🗑️</button>
+     <nav class="control-bar" aria-label="Controls"><button class="control-btn" id="speakBtn" aria-label="Speak text aloud">🔊</button>  <button class="control-btn" id="clearBtn" aria-label="Clear all text">🗑️</button>
      </nav>
     </section>
     <section class="keyboard-section" id="keyboardSection" aria-label="Keyboard">
@@ -459,22 +460,11 @@ body, html {
       updateDisplay();
     }
 
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      updateSoundButton();
-    }
-
-    function updateSoundButton() {
-      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-      const btn = document.getElementById('soundBtn');
-      btn.textContent = soundEnabled ? '🔔' : '🔕';
-    }
 
     document.getElementById('speakBtn').addEventListener('click', () => {
       speakFullText(currentText);
     });
 
-    document.getElementById('soundBtn').addEventListener('click', toggleSound);
     document.getElementById('clearBtn').addEventListener('click', clearAllText);
 
     document.addEventListener('keydown', (e) => {
@@ -526,13 +516,6 @@ body, html {
       clearBtn.style.color = config.text_color || defaultConfig.text_color;
       clearBtn.style.borderColor = config.text_color || defaultConfig.text_color;
       clearBtn.style.fontSize = `${baseSize * 2}px`;
-
-      const soundBtn = document.getElementById('soundBtn');
-      soundBtn.textContent = soundEnabled ? '🔔' : '🔕';
-      soundBtn.style.background = config.secondary_action_color || defaultConfig.secondary_action_color;
-      soundBtn.style.color = config.text_color || defaultConfig.text_color;
-      soundBtn.style.borderColor = config.text_color || defaultConfig.text_color;
-      soundBtn.style.fontSize = `${baseSize * 2}px`;
 
       const keyboardSection = document.getElementById('keyboardSection');
       keyboardSection.style.background = config.surface_color || defaultConfig.surface_color;
