@@ -8,147 +8,304 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
-    html, body {
+    /* keyboard.css - shared keyboard styles */
+
+.keyboard-section {
+  height: 82%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 10px 15px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.keyboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.key-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-grow: 1;
+  min-height: 40px;
+}
+
+.key-btn {
+  flex-grow: 1;
+  flex-basis: 60px;
+  min-width: 40px;
+  max-width: 140px;
+  height: 60px;
+  font-size: 4vw;
+  font-weight: bold;
+  border: 3px solid #1a237e;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #bbdefb;
+  color: #1a237e;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  user-select: none;
+}
+
+.key-btn.space-key {
+  flex-grow: 3;
+  max-width: 300px;
+}
+
+.key-btn.backspace-key {
+  flex-grow: 2;
+  max-width: 180px;
+  font-size: 3vw;
+}
+
+.key-btn:hover {
+  background-color: #90caf9;
+  transform: scale(1.06);
+}
+
+.key-btn:active {
+  transform: scale(0.96);
+}
+
+.key-btn:focus {
+  outline: 5px solid #4a90e2;
+  outline-offset: 3px;
+}
+
+.key-btn.highlight {
+  background-color: #ffeb3b;
+  border-color: #fbc02d;
+  transform: scale(1.08);
+}
+
+.key-btn.pressed-animation {
+  transform: scale(0.94);
+  background-color: #ffe066 !important;
+  border-color: #f9a825 !important;
+}
+
+.control-bar {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.control-btn {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+  border: 3px solid #1a237e;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  user-select: none;
+  background: #bbdefb;
+  color: #1a237e;
+  transition: transform 0.2s ease;
+}
+
+.control-btn:hover {
+  transform: scale(1.05);
+  background: #90caf9;
+}
+
+.control-btn:active {
+  transform: scale(0.98);
+}
+
+.control-btn:focus {
+  outline: 5px solid #4a90e2;
+  outline-offset: 3px;
+}
+
+/* Responsive font size tweaks */
+@media (max-width: 600px) {
+  .key-btn {
+    height: 45px;
+    font-size: 5vw;
+  }
+  .control-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+}
+
+    body, html {
       height: 100%;
       margin: 0;
       font-family: 'Poppins', Arial, sans-serif;
       background: #e3f2fd;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
-    /* ===== HEADER / SENTENCE DISPLAY ===== */
-    .sentence-display {
-      flex: 0 0 auto;
+    /* ===== HEADER ===== */
+    header.lesson-header {
+      position: relative;
+      height: 20%;
       background: #90caf9;
-      color: #0d1b47;
-      font-size: clamp(22px, 3vw, 36px);
-      font-weight: 600;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
       border-bottom: 4px solid #1a237e;
-      text-align: center;
       user-select: none;
-      white-space: pre-wrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      color: #0d1b47;
+      font-size: 36px;
+      font-weight: 600;
+      text-align: center;
       overflow-wrap: break-word;
+      white-space: pre-wrap;
     }
 
+    /* ===== BUTTONS in header top-right ===== */
+    .lesson-buttons {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      display: flex;
+      gap: 15px;
+      user-select: none;
+    }
+
+    .lesson-btn {
+      padding: 8px 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #1a237e;
+      background: #bbdefb;
+      color: #1a237e;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .lesson-btn:hover {
+      background-color: #90caf9;
+    }
+
+    /* ===== SENTENCE DISPLAY (inside header content) ===== */
+    #sentenceDisplay {
+      width: 100%;
+      user-select: none;
+    }
+
+    /* Highlight style for next letter */
     .highlight-next {
       color: #fbc02d;
+      text-decoration: underline;
       border-bottom: 3px solid #fbc02d;
       display: inline-block;
-      min-width: 20px;
+      width: 20px; /* makes space underline visible */
     }
 
-    /* ===== KEYBOARD SECTION (AUTO SCALE) ===== */
+    /* ===== KEYBOARD SECTION ===== */
     .keyboard-section {
-      flex: 1;
+      height: 80%;
       display: flex;
       flex-direction: column;
-      padding: 10px;
+      padding: 20px;
       background: #ffffff;
-      overflow: hidden;
+      box-sizing: border-box;
     }
 
     .keyboard-grid {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      max-width: 100%;
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
     }
 
     .key-row {
-      flex: 1;
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      justify-content: center;
+      flex: 1;
     }
 
-    .key-btn {
-      flex: 1;
-      height: 100%;
-      font-size: clamp(20px, 4vw, 52px);
-      font-weight: bold;
+    /* ===== CONTROLS BAR ===== */
+    .control-bar {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .control-btn {
+      width: 70px;
+      height: 70px;
+      font-size: 32px;
       border: 3px solid #1a237e;
       border-radius: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
+      user-select: none;
       background: #bbdefb;
       color: #1a237e;
-      user-select: none;
-      transition: transform 0.15s ease, background-color 0.15s ease;
-      min-height: 48px;
+      transition: transform 0.2s ease;
     }
-
-    .key-btn.space-key {
-      flex: 3;
-    }
-
-    .key-btn.backspace-key {
-      flex: 2;
-      font-size: clamp(18px, 3vw, 40px);
-    }
-
-    .key-btn:hover {
-      background-color: #90caf9;
+    .control-btn:hover {
       transform: scale(1.05);
+      background: #90caf9;
     }
-
-    .key-btn.highlight {
-      background-color: #ffeb3b;
-      border-color: #fbc02d;
-      transform: scale(1.08);
+    .control-btn:active {
+      transform: scale(0.98);
     }
-
-    .key-btn.pressed-animation {
-      transform: scale(0.94);
-      background-color: #ffe066 !important;
-      border-color: #f9a825 !important;
-    }
-
-    /* ===== CONTROL BAR ===== */
-    .control-bar {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 8px;
-    }
-
-    .control-btn {
-      width: 64px;
-      height: 64px;
-      font-size: 28px;
-      border: 3px solid #1a237e;
-      border-radius: 12px;
-      background: #bbdefb;
-      cursor: pointer;
+    .control-btn:focus {
+      outline: 5px solid #4a90e2;
+      outline-offset: 3px;
     }
   </style>
 </head>
 
 <body>
+  <header class="lesson-header" role="banner">
+    <div id="sentenceDisplay" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- ===== SENTENCE DISPLAY ===== -->
-  <div class="sentence-display" id="sentenceDisplay" aria-live="polite"></div>
+    <div class="lesson-buttons">
+      <button class="lesson-btn" onclick="location.href='learningMode.html'" aria-label="Back to menu">⬅ Menu</button>
+      <button class="lesson-btn" id="skipBtn" aria-label="Skip module">Skip</button>
+    </div>
+  </header>
 
   <!-- ===== KEYBOARD ===== -->
-  <section class="keyboard-section">
-    <div class="keyboard-grid">
-      <div class="key-row" id="row1"></div>
-      <div class="key-row" id="row2"></div>
-      <div class="key-row" id="row3"></div>
-      <div class="key-row" id="row4"></div>
-      <div class="key-row" id="row5"></div>
+  <section class="keyboard-section" aria-label="Keyboard">
+    <div class="keyboard-grid" id="keyboardGrid" role="application">
+      <div class="key-row" id="row1" role="group" aria-label="Keyboard row 1"></div>
+      <div class="key-row" id="row2" role="group" aria-label="Keyboard row 2"></div>
+      <div class="key-row" id="row3" role="group" aria-label="Keyboard row 3"></div>
+      <div class="key-row" id="row4" role="group" aria-label="Keyboard row 4"></div>
+      <div class="key-row" id="row5" role="group" aria-label="Keyboard row 5"></div>
     </div>
 
-    <nav class="control-bar">
-      <button class="control-btn" id="speakBtn">🔊</button>
-      <button class="control-btn" id="soundBtn">🔔</button>
-      <button class="control-btn" id="clearBtn">🗑️</button>
+    <!-- Controls -->
+    <nav class="control-bar" aria-label="Controls">
+      <button class="control-btn" id="speakBtn" aria-label="Speak current sentence">🔊</button>
+      <button class="control-btn" id="soundBtn" aria-label="Toggle sound">🔔</button>
+      <button class="control-btn" id="clearBtn" aria-label="Clear typed text">🗑️</button>
     </nav>
   </section>
 
@@ -234,6 +391,7 @@
     function buildKeyboard() {
       keyboardLayout.forEach((row, i) => {
         const rowEl = document.getElementById(`row${i + 1}`);
+        rowEl.innerHTML = ''; // Clear old keys
         row.forEach(key => {
           const btn = document.createElement('button');
           btn.className = 'key-btn';
@@ -281,11 +439,8 @@
         highlightNextKey();
 
         if (currentIndex === currentSentence.length) {
-          // Speak the full sentence after completion
           speak(currentSentence);
-          setTimeout(() => {
-            loadNextSentence();
-          }, 3000);
+          setTimeout(loadNextSentence, 3000);
         }
       }
     }
@@ -298,10 +453,19 @@
       highlightNextKey();
     }
 
-    // Controls
-    document.getElementById('speakBtn').addEventListener('click', () => {
-      speak(currentSentence);
+    // Skip button logic
+    document.getElementById('skipBtn').addEventListener('click', () => {
+      if (window.speechSynthesis) {
+        const utter = new SpeechSynthesisUtterance("Module skipped");
+        window.speechSynthesis.speak(utter);
+        utter.onend = () => location.href = 'learningMode.html';
+      } else {
+        location.href = 'learningMode.html';
+      }
     });
+
+    // Control buttons
+    document.getElementById('speakBtn').addEventListener('click', () => speak(currentSentence));
     document.getElementById('soundBtn').addEventListener('click', () => {
       soundEnabled = !soundEnabled;
       document.getElementById('soundBtn').textContent = soundEnabled ? '🔔' : '🔕';
@@ -313,6 +477,7 @@
       highlightNextKey();
     });
 
+    // Physical keyboard support
     document.addEventListener('keydown', e => {
       if (currentIndex >= currentSentence.length) return;
 
@@ -334,9 +499,6 @@
     buildKeyboard();
     loadNextSentence();
     document.getElementById('soundBtn').textContent = soundEnabled ? '🔔' : '🔕';
-
   </script>
-
 </body>
 </html>
-
