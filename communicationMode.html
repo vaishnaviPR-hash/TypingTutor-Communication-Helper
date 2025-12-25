@@ -109,17 +109,21 @@ html, body {
 
 @media (orientation: portrait) {
   .key-btn {
-    flex: 0 1 calc((100% - 90px) / 4);
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: calc((100% - (30px * 4)) / 5); /* 5 keys, 4 gaps of 30px */
     max-width: 90px;
-    min-width: 55px;   /* or adjust as you want */
+    min-width: 40px; /* adjust if needed */
     height: 55px;
     font-size: 4.5vw;
   }
 
   .space-key,
   .backspace-key {
-    flex: 0 1 calc((100% - 90px) / 4);  /* same width as normal keys */
-    max-width: 140px;  /* can be bigger if you want */
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: calc(((100% - (30px * 4)) / 5) * 2 + 30px); /* span 2 keys + 1 gap */
+    max-width: 180px;
   }
 }
 
@@ -448,6 +452,7 @@ const keyboardLayout = [
 
 </body>
 </html>
+
 
 
 
