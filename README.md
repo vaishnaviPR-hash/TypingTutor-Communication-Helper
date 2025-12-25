@@ -1,4 +1,5 @@
 # TypingTutor-Communication-Helper
+Live demo at: https://vaishnavipr-hash.github.io/TypingTutor-Communication-Helper/
 
 Welcome to **TypingTutor-Communication-Helper**! This is a fun and interactive web app designed especially for kids to help them communicate and learn using a light-up keyboard and speech features.
 
