@@ -350,7 +350,7 @@ body, html {
     const speechSynth = window.speechSynthesis;
 
     const letterPhonetics = {
-      'A': 'ay', 'B': 'bee', 'C': 'see', 'D': 'dee', 'E': 'ee',
+      'A': 'a', 'B': 'bee', 'C': 'see', 'D': 'dee', 'E': 'ee',
       'F': 'eff', 'G': 'jee', 'H': 'aitch', 'I': 'eye', 'J': 'jay',
       'K': 'kay', 'L': 'ell', 'M': 'em', 'N': 'en', 'O': 'oh',
       'P': 'pee', 'Q': 'cue', 'R': 'are', 'S': 'ess', 'T': 'tee',
@@ -416,7 +416,7 @@ body, html {
         row.forEach(key => {
           const btn = document.createElement('button');
           btn.className = 'key-btn';
-          btn.textContent = key === 'SPACE' ? 'SPACE' : key === 'BACKSPACE' ? '⌫' : key;
+          btn.textContent = key === 'SPACE' ? ' ' : key === 'BACKSPACE' ? '⌫' : key;
           btn.setAttribute('data-key', key);
           btn.setAttribute('aria-label', key === 'BACKSPACE' ? 'Backspace' : key === 'SPACE' ? 'Space' : `Letter ${key}`);
           
