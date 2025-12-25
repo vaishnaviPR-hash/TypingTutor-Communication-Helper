@@ -130,12 +130,13 @@ html, body {
     min-width: 50px;  /* reduced from 55px */
     height: 50px;     /* reduced from 55px */
     font-size: 3.5vw; /* slightly smaller font */
-
+  }  /* <-- This closing brace was missing */
   .space-key,
   .backspace-key {
     flex: 0 0 calc((100% - (30px * 2)) / 3);
   }
 }
+
 </style>
 </head>
 
@@ -442,5 +443,6 @@ const keyboardLayout = [
 
 </body>
 </html>
+
 
 
