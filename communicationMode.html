@@ -317,6 +317,7 @@ body, html {
       <div class="key-row" id="row3" role="group" aria-label="Row 3"></div>
       <div class="key-row" id="row4" role="group" aria-label="Row 4"></div>
       <div class="key-row" id="row5" role="group" aria-label="Row 5"></div>
+      <div class="key-row" id="row6" role="group" aria-label="Row 6"></div>
      </div>
     </section>
    </div>
@@ -339,13 +340,14 @@ body, html {
     let soundEnabled = true;
     let currentText = '';
 
-    const keyboardLayout = [
-      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
-      ['O', 'P', 'Q', 'R', 'S', 'T'],
-      ['U', 'V', 'W', 'X', 'Y', 'Z'],
-      ['SPACE', 'BACKSPACE']
-    ];
+const keyboardLayout = [
+  ['A', 'B', 'C', 'D', 'E'],
+  ['F', 'G', 'H', 'I', 'J'],
+  ['K', 'L', 'M', 'N', 'O'],
+  ['P', 'Q', 'R', 'S', 'T'],
+  ['U', 'V', 'W', 'X', 'Y'],
+  ['Z', 'SPACE', 'BACKSPACE']
+];
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const speechSynth = window.speechSynthesis;
