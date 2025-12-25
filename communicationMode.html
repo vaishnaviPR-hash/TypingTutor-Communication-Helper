@@ -135,12 +135,10 @@ body, html {
 
 .key-row {
   display: flex;
-  gap: 24px;          /* Slightly smaller gap */
+  flex-wrap: wrap;          /* ⭐ THIS is the magic */
   justify-content: center;
-  flex-wrap: wrap;    /* Allow wrapping to avoid overflow */
-  flex-grow: 1;
-  min-height: 40px;
-  max-width: 100%;    /* Ensure max width stays within container */
+  gap: 30px;                /* spacing between keys */
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -301,52 +299,36 @@ body, html {
   }
 }    
 
-/* ============================= */
-/* PORTRAIT MODE – 4 KEYS PER ROW */
-/* ============================= */
 @media (orientation: portrait) {
-
-  .keyboard-grid {
-    gap: 30px; /* vertical gap between rows */
-  }
-
-  .key-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 letters per row */
-    gap: 30px; /* spacing between keys */
-    justify-items: center;
-  }
-
   .key-btn {
-    width: 100%;
+    flex: 0 1 calc((100% - (30px * 3)) / 4);
     max-width: 90px;
+    min-width: 60px;
     height: 60px;
     font-size: 5vw;
   }
 
-  /* Space & backspace span nicely */
-  .key-btn.space-key {
-    grid-column: span 2;
-    max-width: none;
-  }
-
+  .key-btn.space-key,
   .key-btn.backspace-key {
-    grid-column: span 2;
-    max-width: none;
+    flex: 0 1 calc((100% - 30px) / 2); /* spans 2 keys */
   }
 }
 
-/* ============================= */
-/* LANDSCAPE MODE – NORMAL ROWS */
-/* ============================= */
 @media (orientation: landscape) {
-  .key-row {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    flex-wrap: nowrap;
+  .key-btn {
+    flex: 0 1 calc((100% - (30px * 6)) / 7);
+    max-width: 90px;
+    min-width: 55px;
+    height: 55px;
+    font-size: 4vw;
+  }
+
+  .key-btn.space-key,
+  .key-btn.backspace-key {
+    flex: 0 1 calc((100% - (30px * 2)) / 3); /* spans ~3 keys */
   }
 }
+
 
 </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -364,10 +346,6 @@ body, html {
     <section class="keyboard-section" id="keyboardSection" aria-label="Keyboard">
      <div class="keyboard-grid">
       <div class="key-row" id="row1" role="group" aria-label="Row 1"></div>
-      <div class="key-row" id="row2" role="group" aria-label="Row 2"></div>
-      <div class="key-row" id="row3" role="group" aria-label="Row 3"></div>
-      <div class="key-row" id="row4" role="group" aria-label="Row 4"></div>
-      <div class="key-row" id="row5" role="group" aria-label="Row 5"></div>
      </div>
     </section>
    </div>
@@ -391,11 +369,7 @@ body, html {
     let currentText = '';
 
 const keyboardLayout = [
-  ['A', 'B', 'C', 'D', 'E', 'F'],
-  ['G', 'H', 'I', 'J', 'K', 'L'],
-  ['M', 'N', 'O', 'P', 'Q', 'R'],
-  ['S', 'T', 'U', 'V', 'W', 'X'],
-  ['Y', 'Z', 'SPACE', 'BACKSPACE']
+  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'SPACE', 'BACKSPACE']
 ];
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
