@@ -130,17 +130,22 @@ html, body {
 
 @media (orientation: landscape) {
   .key-btn {
-    flex: 0 1 calc((100% - 180px) / 7);
-    max-width: 90px;
-    min-width: 50px;
+    flex: 0 1 calc((100% - (28px * 7)) / 8); /* 8 keys per row with 28px gaps */
+    max-width: 60px;
+    min-width: 45px;
     height: 50px;
-    font-size: 3.5vw;
+    font-size: 28px; /* Smaller font to fit keys */
   }
 
-  .space-key,
-  .backspace-key {
-    flex: 0 1 calc((100% - 90px) / 4);
-    max-width: 140px;
+  .key-btn.space-key {
+    flex: 2; /* space key smaller for 8 keys */
+    max-width: 120px;
+  }
+
+  .key-btn.backspace-key {
+    flex: 1.5;
+    max-width: 100px;
+    font-size: 24px;
   }
 }
 
@@ -452,6 +457,7 @@ const keyboardLayout = [
 
 </body>
 </html>
+
 
 
 
