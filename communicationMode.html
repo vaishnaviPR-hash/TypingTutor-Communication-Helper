@@ -20,20 +20,6 @@ html, body {
 }
 * { box-sizing: inherit; }
 
-body {
-  min-height: 100vh;
-}
-
-.main-container {
-  height: 100vh;
-  overflow: hidden;
-}
-
-.keyboard-section {
-  flex: 1;
-  overflow-y: auto;
-}
-
   
 /* ===== MAIN ===== */
 .main-container {
@@ -100,7 +86,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 30px;
+  gap: 27px;
 }
 
 /* ===== KEYS ===== */
@@ -124,10 +110,12 @@ body {
 /* ===== PORTRAIT ===== */
 @media (orientation: portrait) {
   .key-btn {
-    flex: 0 0 calc((100% - (30px * 3)) / 4);
-    font-size: 5vw;
+    flex: 0 1 calc((100% - (24px * 3)) / 4);
+    max-width: 90px;
+    min-width: 55px;   /* reduced from 60px */
+    height: 55px;      /* reduced from 60px */
+    font-size: 4.5vw;  /* slightly smaller font */
   }
-
   .space-key,
   .backspace-key {
     flex: 0 0 calc((100% - 30px) / 2);
@@ -137,10 +125,11 @@ body {
 /* ===== LANDSCAPE ===== */
 @media (orientation: landscape) {
   .key-btn {
-    flex: 0 0 calc((100% - (30px * 6)) / 7);
-    height: 55px;
-    font-size: 4vw;
-  }
+    flex: 0 1 calc((100% - (24px * 6)) / 7);
+    max-width: 90px;
+    min-width: 50px;  /* reduced from 55px */
+    height: 50px;     /* reduced from 55px */
+    font-size: 3.5vw; /* slightly smaller font */
 
   .space-key,
   .backspace-key {
@@ -453,4 +442,5 @@ const keyboardLayout = [
 
 </body>
 </html>
+
 
