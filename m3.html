@@ -153,9 +153,190 @@
   </section>
 
   <script>
-    /* 🔒 YOUR ORIGINAL JS — UNCHANGED */
-    /* (Everything from your script can stay exactly as-is) */
+    const sentences = [
+      "THE CAT JUMPS HIGH",
+      "I LOVE TO READ BOOKS",
+      "THE SUN IS BRIGHT",
+      "LET'S GO FOR A WALK",
+      "SHE SELLS SEA SHELLS"
+    ];
+
+    let currentSentence = "";
+    let currentIndex = 0;
+    let typedText = "";
+
+    const keyboardLayout = [
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
+      ['O', 'P', 'Q', 'R', 'S', 'T'],
+      ['U', 'V', 'W', 'X', 'Y', 'Z'],
+      ['SPACE', 'BACKSPACE']
+    ];
+
+    let soundEnabled = true;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const speechSynth = window.speechSynthesis;
+
+    const frequencies = {
+      'A': 261.63, 'B': 277.18, 'C': 293.66, 'D': 311.13, 'E': 329.63,
+      'F': 349.23, 'G': 369.99, 'H': 392.00, 'I': 415.30, 'J': 440.00,
+      'K': 466.16, 'L': 493.88, 'M': 523.25, 'N': 554.37, 'O': 587.33,
+      'P': 622.25, 'Q': 659.25, 'R': 698.46, 'S': 739.99, 'T': 783.99,
+      'U': 830.61, 'V': 880.00, 'W': 932.33, 'X': 987.77, 'Y': 1046.50,
+      'Z': 1108.73, 'SPACE': 180
+    };
+
+    function playTone(letter) {
+      if (!soundEnabled) return;
+
+      const freq = frequencies[letter] || 440;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    function speak(text) {
+      if (!text) return;
+      speechSynth.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.9;
+      speechSynth.speak(utter);
+    }
+
+    function renderSentence() {
+      let html = "";
+      for (let i = 0; i < currentSentence.length; i++) {
+        if (i === currentIndex) {
+          if (currentSentence[i] === " ") {
+            html += `<span class="highlight-next">&nbsp;</span>`;
+          } else {
+            html += `<span class="highlight-next">${currentSentence[i]}</span>`;
+          }
+        } else {
+          html += currentSentence[i];
+        }
+      }
+      document.getElementById('sentenceDisplay').innerHTML = html;
+    }
+
+    function buildKeyboard() {
+      keyboardLayout.forEach((row, i) => {
+        const rowEl = document.getElementById(`row${i + 1}`);
+        row.forEach(key => {
+          const btn = document.createElement('button');
+          btn.className = 'key-btn';
+          btn.textContent = key === 'BACKSPACE' ? '⌫' : (key === 'SPACE' ? 'SPACE' : key);
+          btn.dataset.key = key;
+
+          if (key === 'SPACE') btn.classList.add('space-key');
+          if (key === 'BACKSPACE') btn.classList.add('backspace-key');
+
+          btn.addEventListener('click', () => handleKeyPress(key, btn));
+          rowEl.appendChild(btn);
+        });
+      });
+    }
+
+    function highlightNextKey() {
+      document.querySelectorAll('.key-btn').forEach(btn => btn.classList.remove('highlight'));
+      if (currentIndex < currentSentence.length) {
+        let nextChar = currentSentence[currentIndex];
+        if (nextChar === " ") nextChar = "SPACE";
+        const btn = document.querySelector(`[data-key="${nextChar}"]`);
+        if (btn) btn.classList.add('highlight');
+      }
+    }
+
+    function handleKeyPress(key, btnElement) {
+      if (currentIndex >= currentSentence.length) return;
+
+      let expectedChar = currentSentence[currentIndex];
+      if (expectedChar === " ") expectedChar = "SPACE";
+
+      if (key === expectedChar) {
+        btnElement.classList.add('pressed-animation');
+        playTone(key === 'SPACE' ? 'SPACE' : key);
+        speak(key === 'SPACE' ? 'space' : key);
+
+        setTimeout(() => {
+          btnElement.classList.remove('pressed-animation');
+        }, 300);
+
+        typedText += (key === 'SPACE' ? ' ' : key);
+
+        currentIndex++;
+        renderSentence();
+        highlightNextKey();
+
+        if (currentIndex === currentSentence.length) {
+          // Speak the full sentence after completion
+          speak(currentSentence);
+          setTimeout(() => {
+            loadNextSentence();
+          }, 3000);
+        }
+      }
+    }
+
+    function loadNextSentence() {
+      currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+      currentIndex = 0;
+      typedText = "";
+      renderSentence();
+      highlightNextKey();
+    }
+
+    // Controls
+    document.getElementById('speakBtn').addEventListener('click', () => {
+      speak(currentSentence);
+    });
+    document.getElementById('soundBtn').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').textContent = soundEnabled ? '🔔' : '🔕';
+    });
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      currentIndex = 0;
+      typedText = "";
+      renderSentence();
+      highlightNextKey();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (currentIndex >= currentSentence.length) return;
+
+      let key = e.key.toUpperCase();
+      if (key === ' ') key = 'SPACE';
+      else if (key === 'BACKSPACE') key = 'BACKSPACE';
+
+      const expectedChar = currentSentence[currentIndex] === ' ' ? 'SPACE' : currentSentence[currentIndex];
+
+      if (key === expectedChar) {
+        const btn = document.querySelector(`[data-key="${key}"]`);
+        if (btn) {
+          e.preventDefault();
+          handleKeyPress(key, btn);
+        }
+      }
+    });
+
+    buildKeyboard();
+    loadNextSentence();
+    document.getElementById('soundBtn').textContent = soundEnabled ? '🔔' : '🔕';
+
   </script>
 
 </body>
 </html>
+
