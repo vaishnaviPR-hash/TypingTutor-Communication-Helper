@@ -2,547 +2,288 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  />
   <title>Module 3 – Sentence Typing with Keyboard</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
-<!-- Inside your existing header or top area (add this near the top of body) -->
+  <style>
+    :root {
+      --border: #1a237e;
+      --bg-main: #e3f2fd;
+      --bg-key: #bbdefb;
+      --bg-key-hover: #90caf9;
+    }
 
-<header class="lesson-header" role="banner" style="position: relative;">
-  <!-- Your existing big sentence or word display here -->
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background: var(--bg-main);
+      overflow: hidden;
+    }
 
-  <!-- Add these buttons aligned top-right -->
-  <div class="lesson-buttons" style="
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    display: flex;
-    gap: 15px;
-  ">
-    <button class="lesson-btn" onclick="location.href='learningMode.html'" aria-label="Back to menu" style="
-      padding: 8px 16px;
-      font-size: 16px;
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== HEADER ===== */
+    .lesson-header {
+      position: relative;
+      height: 6vh;
+      min-height: 48px;
+    }
+
+    .lesson-buttons {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .lesson-btn {
+      padding: 6px 14px;
+      font-size: clamp(14px, 2vw, 16px);
       border-radius: 8px;
-      border: 2px solid #1a237e;
-      background: #bbdefb;
-      color: #1a237e;
+      border: 2px solid var(--border);
+      background: var(--bg-key);
+      color: var(--border);
       cursor: pointer;
-      user-select: none;
-      transition: background-color 0.2s ease;
-    ">⬅ Menu</button>
+    }
 
-    <button class="lesson-btn" id="skipBtn" aria-label="Skip module" style="
-      padding: 8px 16px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 2px solid #1a237e;
-      background: #bbdefb;
-      color: #1a237e;
-      cursor: pointer;
+    /* ===== SENTENCE DISPLAY ===== */
+    .sentence-display {
+      flex: 0 0 22vh;
+      min-height: 80px;
+      background: #90caf9;
+      color: #0d1b47;
+      font-size: clamp(20px, 4vw, 38px);
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 4px solid var(--border);
+      text-align: center;
       user-select: none;
-      transition: background-color 0.2s ease;
-    ">Skip</button>
+      word-wrap: break-word;
+    }
+
+    .highlight-next {
+      color: #fbc02d;
+      border-bottom: 3px solid #fbc02d;
+      display: inline-block;
+      min-width: 0.6em;
+    }
+
+    /* ===== KEYBOARD ===== */
+    .keyboard-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    .keyboard-grid {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.5vh, 12px);
+      justify-content: center;
+    }
+
+    .key-row {
+      display: flex;
+      gap: clamp(6px, 1.5vw, 12px);
+      justify-content: center;
+      flex: 1;
+    }
+
+    .key-btn {
+      flex: 1;
+      min-width: clamp(44px, 8vw, 90px);
+      max-width: clamp(70px, 14vw, 140px);
+      font-size: clamp(20px, 4vw, 52px);
+      font-weight: bold;
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      background: var(--bg-key);
+      color: var(--border);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    .key-btn.space-key {
+      flex: 3;
+      max-width: 60vw;
+      font-size: clamp(16px, 3vw, 30px);
+    }
+
+    .key-btn.backspace-key {
+      flex: 2;
+      font-size: clamp(18px, 3vw, 40px);
+    }
+
+    .key-btn:hover {
+      background-color: var(--bg-key-hover);
+      transform: scale(1.05);
+    }
+
+    .key-btn:active {
+      transform: scale(0.95);
+    }
+
+    .key-btn.highlight {
+      background-color: #ffeb3b;
+      border-color: #fbc02d;
+      transform: scale(1.08);
+    }
+
+    .key-btn.pressed-animation {
+      background-color: #ffe066 !important;
+      transform: scale(0.94);
+    }
+
+    /* ===== CONTROLS ===== */
+    .control-bar {
+      display: flex;
+      gap: clamp(10px, 3vw, 18px);
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .control-btn {
+      width: clamp(48px, 10vw, 70px);
+      height: clamp(48px, 10vw, 70px);
+      font-size: clamp(22px, 4vw, 32px);
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      background: var(--bg-key);
+      color: var(--border);
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="lesson-header">
+  <div class="lesson-buttons">
+    <button class="lesson-btn" onclick="location.href='learningMode.html'">⬅ Menu</button>
+    <button class="lesson-btn" id="skipBtn">Skip</button>
   </div>
 </header>
 
-<script>
-  // Add your existing skip logic, or if not present, add it here:
+<div class="sentence-display" id="sentenceDisplay"></div>
 
-  document.getElementById('skipBtn').addEventListener('click', () => {
-    // Speak and navigate back or skip module
-    if (window.speechSynthesis) {
-      const utter = new SpeechSynthesisUtterance("Module skipped");
-      window.speechSynthesis.speak(utter);
-      utter.onend = () => {
-        location.href = 'learningMode.html';
-      };
-    } else {
-      location.href = 'learningMode.html';
-    }
-  });
-</script>
-
-  <style>
-    body, html {
-  height: 100%;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #e3f2fd;
-  overflow: hidden;
-}
-
-/* ===== TOP LESSON BAR (updated) ===== */
-.lesson-header {
-  height: 18%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 30px;
-  background: #90caf9; /* Light blue background */
-  border-bottom: 4px solid #1a237e;
-}
-
-.lesson-text {
-  font-size: 32px;
-  font-weight: 600;
-  color: #0d1b47; /* Darker navy */
-  font-family: 'Poppins', Verdana, Arial, sans-serif; /* Simple, friendly font */
-  user-select: none;
-}
-
-.lesson-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-.lesson-btn {
-  padding: 12px 20px;
-  font-size: 18px;
-  border-radius: 10px;
-  border: 3px solid #1a237e;
-  background: #bbdefb; /* Soft blue background */
-  color: #1a237e;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-.lesson-btn:hover {
-  background-color: #90caf9;
-}
-
-/* ===== KEYBOARD SECTION ===== */
-.keyboard-section {
-  height: 82%;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background: #ffffff;
-  box-sizing: border-box;
-}
-
-.keyboard-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 100%;
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-}
-
-.key-row {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex: 1;
-}
-
-.key-btn {
-  flex: 1;
-  min-width: 80px;
-  max-width: 140px;
-  height: 100%;
-  font-size: 52px;
-  font-weight: bold;
-  border: 3px solid #1a237e;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-  user-select: none;
-  background: #bbdefb; /* Soft blue background */
-  color: #1a237e;
-}
-
-.key-btn.space-key {
-  flex: 3;
-  max-width: 500px;
-}
-
-.key-btn.backspace-key {
-  flex: 2;
-  max-width: 280px;
-  font-size: 40px;
-}
-
-.key-btn:hover {
-  background-color: #90caf9; /* Slightly darker on hover */
-  transform: scale(1.06);
-}
-
-.key-btn:active {
-  transform: scale(0.96);
-}
-
-.key-btn:focus {
-  outline: 5px solid #4a90e2;
-  outline-offset: 3px;
-}
-
-/* Highlight for the current letter */
-.key-btn.highlight {
-  background-color: #ffeb3b;
-  transform: scale(1.08);
-  border-color: #fbc02d;
-}
-
-/* Press animation */
-.key-btn.pressed-animation {
-  transform: scale(0.94);
-  background-color: #ffe066 !important;
-  border-color: #f9a825 !important;
-}
-
-/* Control bar with speak, sound toggle, clear */
-.control-bar {
-  display: flex;
-  gap: 15px;
-  margin-top: 10px;
-  justify-content: center;
-}
-.control-btn {
-  width: 70px;
-  height: 70px;
-  font-size: 32px;
-  border: 3px solid #1a237e;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  user-select: none;
-  background: #bbdefb; /* Soft blue background */
-  color: #1a237e;
-  transition: transform 0.2s ease;
-}
-.control-btn:hover {
-  transform: scale(1.05);
-  background: #90caf9;
-}
-.control-btn:active {
-  transform: scale(0.98);
-}
-.control-btn:focus {
-  outline: 5px solid #4a90e2;
-  outline-offset: 3px;
-}
-
-
-/* ===== Responsive adjustments ===== */
-
-/* Tablets and smaller devices */
-@media (max-width: 1200px) {
-  .key-btn {
-    width: 70px;
-    height: 70px;
-    font-size: 28px;
-  }
-
-  .key-btn.space-key {
-    width: 250px;
-  }
-
-  .key-btn.backspace-key {
-    width: 130px;
-  }
-}
-
-/* Phones and very small screens */
-@media (max-width: 768px) {
-  .lesson-header {
-    height: 20%;
-    padding: 15px 15px;
-  }
-
-  .lesson-text {
-    font-size: 24px;
-  }
-
-  .lesson-btn {
-    padding: 10px 15px;
-    font-size: 16px;
-  }
-
-  .keyboard-section {
-    height: 80%;
-    padding: 10px;
-  }
-
-  .key-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-  }
-
-  .key-btn.space-key {
-    width: 200px;
-  }
-
-  .key-btn.backspace-key {
-    width: 110px;
-    font-size: 20px;
-  }
-}
-
-/* Landscape orientation fixes */
-@media (orientation: landscape) {
-  .lesson-header {
-    height: 16%;
-    padding: 15px 30px;
-  }
-
-  .keyboard-section {
-    height: 84%;
-    padding: 20px 15px 15px 15px;
-  }
-
-  .keyboard-grid {
-    height: 100%;
-    gap: 8px;
-    justify-content: space-between; /* spread rows vertically */
-  }
-
-  .key-row {
-    flex: 1;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .key-btn {
-    min-width: 90px; /* slightly wider */
-    max-width: 160px;
-    font-size: 48px; /* slightly smaller */
-    height: 100%;
-  }
-
-  .key-btn.space-key {
-    flex: 3;
-    max-width: 600px;
-  }
-
-  .key-btn.backspace-key {
-    flex: 2;
-    max-width: 320px;
-    font-size: 38px;
-  }
-}     
-
-  </style>
-</head>
-<body>
-
-  <!-- ===== SENTENCE DISPLAY ===== -->
-  <div class="sentence-display" aria-live="polite" aria-atomic="true" id="sentenceDisplay">
-    <!-- Sentence with highlight will appear here -->
+<section class="keyboard-section">
+  <div class="keyboard-grid">
+    <div class="key-row" id="row1"></div>
+    <div class="key-row" id="row2"></div>
+    <div class="key-row" id="row3"></div>
+    <div class="key-row" id="row4"></div>
+    <div class="key-row" id="row5"></div>
   </div>
 
-  <!-- ===== KEYBOARD ===== -->
-  <section class="keyboard-section" aria-label="Keyboard">
-    <div class="keyboard-grid" id="keyboardGrid">
-      <div class="key-row" id="row1" role="group" aria-label="Keyboard row 1"></div>
-      <div class="key-row" id="row2" role="group" aria-label="Keyboard row 2"></div>
-      <div class="key-row" id="row3" role="group" aria-label="Keyboard row 3"></div>
-      <div class="key-row" id="row4" role="group" aria-label="Keyboard row 4"></div>
-      <div class="key-row" id="row5" role="group" aria-label="Keyboard row 5"></div>
-    </div>
+  <div class="control-bar">
+    <button class="control-btn" id="speakBtn">🔊</button>
+    <button class="control-btn" id="soundBtn">🔔</button>
+    <button class="control-btn" id="clearBtn">🗑️</button>
+  </div>
+</section>
 
-    <!-- Controls -->
-    <nav class="control-bar" aria-label="Controls">
-      <button class="control-btn" id="speakBtn" aria-label="Speak current sentence">🔊</button>
-      <button class="control-btn" id="soundBtn" aria-label="Toggle sound">🔔</button>
-      <button class="control-btn" id="clearBtn" aria-label="Clear typed text">🗑️</button>
-    </nav>
-  </section>
+<script>
+  const sentences = [
+    "THE CAT JUMPS HIGH",
+    "I LOVE TO READ BOOKS",
+    "THE SUN IS BRIGHT",
+    "LET'S GO FOR A WALK",
+    "SHE SELLS SEA SHELLS"
+  ];
 
-  <script>
-    const sentences = [
-      "THE CAT JUMPS HIGH",
-      "I LOVE TO READ BOOKS",
-      "THE SUN IS BRIGHT",
-      "LET'S GO FOR A WALK",
-      "SHE SELLS SEA SHELLS"
-    ];
+  let currentSentence = "";
+  let currentIndex = 0;
+  let soundEnabled = true;
 
-    let currentSentence = "";
-    let currentIndex = 0;
-    let typedText = "";
+  const keyboardLayout = [
+    ['A','B','C','D','E','F','G'],
+    ['H','I','J','K','L','M','N'],
+    ['O','P','Q','R','S','T'],
+    ['U','V','W','X','Y','Z'],
+    ['SPACE','BACKSPACE']
+  ];
 
-    const keyboardLayout = [
-      ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-      ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
-      ['O', 'P', 'Q', 'R', 'S', 'T'],
-      ['U', 'V', 'W', 'X', 'Y', 'Z'],
-      ['SPACE', 'BACKSPACE']
-    ];
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const synth = window.speechSynthesis;
 
-    let soundEnabled = true;
+  function speak(text){
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.9;
+    synth.speak(u);
+  }
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const speechSynth = window.speechSynthesis;
-
-    const frequencies = {
-      'A': 261.63, 'B': 277.18, 'C': 293.66, 'D': 311.13, 'E': 329.63,
-      'F': 349.23, 'G': 369.99, 'H': 392.00, 'I': 415.30, 'J': 440.00,
-      'K': 466.16, 'L': 493.88, 'M': 523.25, 'N': 554.37, 'O': 587.33,
-      'P': 622.25, 'Q': 659.25, 'R': 698.46, 'S': 739.99, 'T': 783.99,
-      'U': 830.61, 'V': 880.00, 'W': 932.33, 'X': 987.77, 'Y': 1046.50,
-      'Z': 1108.73, 'SPACE': 180
-    };
-
-    function playTone(letter) {
-      if (!soundEnabled) return;
-
-      const freq = frequencies[letter] || 440;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.frequency.value = freq;
-      osc.type = 'sine';
-
-      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.25);
+  function renderSentence(){
+    let out = "";
+    for(let i=0;i<currentSentence.length;i++){
+      out += i===currentIndex
+        ? `<span class="highlight-next">${currentSentence[i]===' ' ? '&nbsp;' : currentSentence[i]}</span>`
+        : currentSentence[i];
     }
+    sentenceDisplay.innerHTML = out;
+  }
 
-    function speak(text) {
-      if (!text) return;
-      speechSynth.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 0.9;
-      speechSynth.speak(utter);
-    }
-
-    function renderSentence() {
-      let html = "";
-      for (let i = 0; i < currentSentence.length; i++) {
-        if (i === currentIndex) {
-          if (currentSentence[i] === " ") {
-            html += `<span class="highlight-next">&nbsp;</span>`;
-          } else {
-            html += `<span class="highlight-next">${currentSentence[i]}</span>`;
-          }
-        } else {
-          html += currentSentence[i];
-        }
-      }
-      document.getElementById('sentenceDisplay').innerHTML = html;
-    }
-
-    function buildKeyboard() {
-      keyboardLayout.forEach((row, i) => {
-        const rowEl = document.getElementById(`row${i + 1}`);
-        row.forEach(key => {
-          const btn = document.createElement('button');
-          btn.className = 'key-btn';
-          btn.textContent = key === 'BACKSPACE' ? '⌫' : (key === 'SPACE' ? 'SPACE' : key);
-          btn.dataset.key = key;
-
-          if (key === 'SPACE') btn.classList.add('space-key');
-          if (key === 'BACKSPACE') btn.classList.add('backspace-key');
-
-          btn.addEventListener('click', () => handleKeyPress(key, btn));
-          rowEl.appendChild(btn);
-        });
+  function buildKeyboard(){
+    keyboardLayout.forEach((row,i)=>{
+      const rowEl = document.getElementById(`row${i+1}`);
+      row.forEach(k=>{
+        const b = document.createElement('button');
+        b.className='key-btn';
+        b.textContent = k==='BACKSPACE'?'⌫':k;
+        b.dataset.key=k;
+        if(k==='SPACE') b.classList.add('space-key');
+        if(k==='BACKSPACE') b.classList.add('backspace-key');
+        b.onclick=()=>press(k,b);
+        rowEl.appendChild(b);
       });
-    }
+    });
+  }
 
-    function highlightNextKey() {
-      document.querySelectorAll('.key-btn').forEach(btn => btn.classList.remove('highlight'));
-      if (currentIndex < currentSentence.length) {
-        let nextChar = currentSentence[currentIndex];
-        if (nextChar === " ") nextChar = "SPACE";
-        const btn = document.querySelector(`[data-key="${nextChar}"]`);
-        if (btn) btn.classList.add('highlight');
-      }
-    }
-
-    function handleKeyPress(key, btnElement) {
-      if (currentIndex >= currentSentence.length) return;
-
-      let expectedChar = currentSentence[currentIndex];
-      if (expectedChar === " ") expectedChar = "SPACE";
-
-      if (key === expectedChar) {
-        btnElement.classList.add('pressed-animation');
-        playTone(key === 'SPACE' ? 'SPACE' : key);
-        speak(key === 'SPACE' ? 'space' : key);
-
-        setTimeout(() => {
-          btnElement.classList.remove('pressed-animation');
-        }, 300);
-
-        typedText += (key === 'SPACE' ? ' ' : key);
-
-        currentIndex++;
-        renderSentence();
-        highlightNextKey();
-
-        if (currentIndex === currentSentence.length) {
-          // Speak the full sentence after completion
-          speak(currentSentence);
-          setTimeout(() => {
-            loadNextSentence();
-          }, 3000);
-        }
-      }
-    }
-
-    function loadNextSentence() {
-      currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
-      currentIndex = 0;
-      typedText = "";
+  function press(key,btn){
+    if(currentIndex>=currentSentence.length) return;
+    let expected=currentSentence[currentIndex]===' '?'SPACE':currentSentence[currentIndex];
+    if(key===expected){
+      btn.classList.add('pressed-animation');
+      setTimeout(()=>btn.classList.remove('pressed-animation'),200);
+      currentIndex++;
       renderSentence();
-      highlightNextKey();
-    }
-
-    // Controls
-    document.getElementById('speakBtn').addEventListener('click', () => {
-      speak(currentSentence);
-    });
-    document.getElementById('soundBtn').addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      document.getElementById('soundBtn').textContent = soundEnabled ? '🔔' : '🔕';
-    });
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      currentIndex = 0;
-      typedText = "";
-      renderSentence();
-      highlightNextKey();
-    });
-
-    document.addEventListener('keydown', e => {
-      if (currentIndex >= currentSentence.length) return;
-
-      let key = e.key.toUpperCase();
-      if (key === ' ') key = 'SPACE';
-      else if (key === 'BACKSPACE') key = 'BACKSPACE';
-
-      const expectedChar = currentSentence[currentIndex] === ' ' ? 'SPACE' : currentSentence[currentIndex];
-
-      if (key === expectedChar) {
-        const btn = document.querySelector(`[data-key="${key}"]`);
-        if (btn) {
-          e.preventDefault();
-          handleKeyPress(key, btn);
-        }
+      if(currentIndex===currentSentence.length){
+        speak(currentSentence);
+        setTimeout(loadNext,2500);
       }
-    });
+    }
+  }
 
-    buildKeyboard();
-    loadNextSentence();
-    document.getElementById('soundBtn').textContent = soundEnabled ? '🔔' : '🔕';
+  function loadNext(){
+    currentSentence=sentences[Math.floor(Math.random()*sentences.length)];
+    currentIndex=0;
+    renderSentence();
+  }
 
-  </script>
+  buildKeyboard();
+  loadNext();
+</script>
+
 </body>
 </html>
-
