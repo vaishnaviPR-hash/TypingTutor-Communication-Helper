@@ -126,7 +126,7 @@ html, body {
 
 @media (orientation: landscape) {
   .key-btn {
-    flex: 0 1 calc((100% - (24px * 6)) / 7);
+    flex: 0 1 calc((100% - 180px) / 7);
     max-width: 90px;
     min-width: 50px;
     height: 50px;
@@ -135,9 +135,11 @@ html, body {
 
   .space-key,
   .backspace-key {
-    flex: 0 1 calc((100% - (30px * 3)) / 4);
+    flex: 0 1 calc((100% - 90px) / 4);
+    max-width: 140px;
   }
 }
+
 
 
 </style>
@@ -446,6 +448,7 @@ const keyboardLayout = [
 
 </body>
 </html>
+
 
 
 
